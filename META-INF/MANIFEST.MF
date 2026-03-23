@@ -1,0 +1,42 @@
+Manifest-Version: 1.0
+Created-By: Apache Maven Bundle Plugin 5.1.9
+Build-Jdk-Spec: 21
+Class-Path: hk2-core.jar hk2-locator.jar jakarta.inject-api.jar aopallia
+ nce-repackaged.jar hk2-api.jar jakarta.annotation-api.jar javassist.jar
+  hk2-utils.jar simple-glassfish-api.jar common-util.jar logging-annotat
+ ion-processor.jar
+Main-Class: com.sun.enterprise.glassfish.bootstrap.ASMain
+Bundle-Activator: com.sun.enterprise.glassfish.bootstrap.osgi.GlassFishM
+ ainActivator
+Bundle-Description: Glassfish appserver boostraping classes
+Bundle-DocURL: https://www.eclipse.org
+Bundle-License: http://www.eclipse.org/legal/epl-2.0, https://www.gnu.or
+ g/software/classpath/license.html
+Bundle-ManifestVersion: 2
+Bundle-Name: Appserver Core Bootstraping Classes
+Bundle-SymbolicName: org.glassfish.main.core.glassfish
+Bundle-Vendor: Eclipse Foundation
+Bundle-Version: 8.0.0.M6
+Export-Package: com.sun.enterprise.glassfish.bootstrap;uses:="com.sun.en
+ terprise.module,com.sun.enterprise.module.bootstrap,com.sun.enterprise.
+ module.common_impl,jakarta.inject,org.glassfish.embeddable,org.glassfis
+ h.embeddable.spi,org.glassfish.hk2.api,org.glassfish.hk2.utilities";ver
+ sion="8.0.0",com.sun.enterprise.glassfish.bootstrap.osgi;uses:="com.sun
+ .enterprise.glassfish.bootstrap,org.glassfish.embeddable,org.glassfish.
+ embeddable.spi,org.osgi.framework,org.osgi.framework.launch";version="8
+ .0.0"
+Import-Package: com.sun.enterprise.glassfish.bootstrap,com.sun.enterpris
+ e.module;version="[4.0,5)",com.sun.enterprise.module.bootstrap;version=
+ "[4.0,5)",com.sun.enterprise.module.common_impl;version="[4.0,5)",com.s
+ un.enterprise.module.single;version="[4.0,5)",com.sun.enterprise.util;v
+ ersion="[8.0,9)",jakarta.inject;version="[2.0,3)",org.glassfish.common.
+ util;version="[8.0,9)",org.glassfish.embeddable;version="[8.0,9)",org.g
+ lassfish.embeddable.spi;version="[8.0,9)",org.glassfish.hk2.api;version
+ ="[4.0,5)",org.glassfish.hk2.utilities;version="[4.0,5)",org.glassfish.
+ main.jul;version="[8.0,9)",org.osgi.framework;version="[1.10,2)",org.os
+ gi.framework.launch;version="[1.2,2)",org.osgi.service.packageadmin;ver
+ sion="[1.2,2)",org.osgi.service.startlevel;version="[1.1,2)",org.osgi.u
+ til.tracker;version="[1.5,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=21))"
+Tool: Bnd-6.3.1.202206071316
+

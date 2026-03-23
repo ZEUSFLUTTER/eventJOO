@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Mes Événements</ui:define>
+
+    <ui:define name="pageIcon">
+        <i class="pi pi-compass text-primary" style="font-size: 1.5rem;"></i>
+    </ui:define>
+
+    <ui:define name="pageTitle">Tous mes événements</ui:define>
+
+    <ui:define name="content">
+        <style>
+            .premium-card {
+                background: #ffffff;
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                padding: 2rem;
+            }
+            .header-banner {
+                background: linear-gradient(135deg, #0047FF 0%, #002db3 100%);
+                border-radius: 12px;
+                padding: 2rem;
+                color: white;
+                margin-bottom: 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                box-shadow: 0 10px 30px rgba(0, 71, 255, 0.2);
+            }
+            .header-banner h2 {
+                font-weight: 700;
+                margin: 0 0 0.5rem 0;
+            }
+            .header-banner p {
+                margin: 0;
+                opacity: 0.8;
+                font-size: 1rem;
+            }
+            .btn-create-premium {
+                background-color: #ffffff;
+                color: #0047FF;
+                border: none;
+                border-radius: 50px;
+                padding: 10px 25px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: transform 0.2s, box-shadow 0.2s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .btn-create-premium:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            }
+            .custom-datatable .ui-datatable-header, .custom-datatable .ui-paginator {
+                background: transparent;
+                border: none;
+            }
+            .custom-datatable th {
+                background-color: #f8fbff !important;
+                color: #333 !important;
+                font-weight: 600 !important;
+                text-transform: uppercase;
+                font-size: 0.85rem;
+                letter-spacing: 0.5px;
+                border-top: none !important;
+                border-right: none !important;
+                border-left: none !important;
+                border-bottom: 2px solid #eef2f6 !important;
+                padding: 1rem !important;
+            }
+            .custom-datatable td {
+                border-right: none !important;
+                border-left: none !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                padding: 1rem !important;
+                vertical-align: middle;
+            }
+            .custom-datatable tr:hover {
+                background-color: #fcfdfe !important;
+            }
+            .event-title {
+                font-weight: 700;
+                color: #1a1a1a;
+                font-size: 1.05rem;
+                margin-bottom: 0.2rem;
+            }
+            .event-subtitle {
+                font-size: 0.85rem;
+                color: #6c757d;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .badge-custom {
+                padding: 6px 12px;
+                border-radius: 30px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            .badge-actif { background-color: #e6f4ea; color: #1e8e3e; }
+            .badge-brouillon { background-color: #fef0f0; color: #d93025; }
+        </style>
+
+        <h:form id="formEvenements">
+            <p:growl id="messages" showDetail="true" />
+            
+            <div class="row">
+                <div class="col-12">
+                    <!-- Banner -->
+                    <div class="header-banner">
+                        <div>
+                            <h2>Gérez vos Événements</h2>
+                            <p>Suivez, modifiez ou ajoutez de nouveaux événements en un clic.</p>
+                        </div>
+                        <div>
+                            <p:button outcome="orga_creer_evenement" value="Nouvel Événement" icon="pi pi-plus" styleClass="btn-create-premium" />
+                        </div>
+                    </div>
+
+                    <!-- Table Card -->
+                    <div class="premium-card">
+                        <p:dataTable id="dt-evenements" widgetVar="dtEvenements" var="evenement" value="#{orgaEvenementController.mesEvenements}"
+                                     reflow="true" styleClass="custom-datatable"
+                                     paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom"
+                                     emptyMessage="Aucun événement trouvé."
+                                     globalFilterFunction="#{evenement.titre}">
+
+                            <p:column headerText="Événement" sortBy="#{evenement.titre}" filterBy="#{evenement.titre}">
+                                <div class="event-title">#{evenement.titre}</div>
+                                <div class="event-subtitle"><i class="pi pi-map-marker"></i> #{evenement.lieu}</div>
+                            </p:column>
+                            
+                            <p:column headerText="Date et Heure" sortBy="#{evenement.dateEvenement}">
+                                <div style="font-weight: 500; color: #333;">
+                                    <h:outputText value="#{evenement.dateEvenement}">
+                                        <f:convertDateTime pattern="dd MMM yyyy" locale="fr"/>
+                                    </h:outputText>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #6c757d;">
+                                    <i class="pi pi-clock"></i> 
+                                    <h:outputText value="#{evenement.dateEvenement}">
+                                        <f:convertDateTime pattern="HH:mm" />
+                                    </h:outputText>
+                                </div>
+                            </p:column>
+
+                            <p:column headerText="Offre de Billets">
+                                <span style="font-weight: 600; color: #0047FF;">#{evenement.categoriesBillets.size()}</span> catégories créées
+                                <br/>
+                                <h:outputText value="#{evenement.categoriesBillets.stream().map(c -> c.nom).toList().toString().replace('[','').replace(']','')}" style="font-size: 0.8rem; color: #6c757d;"/>
+                            </p:column>
+
+                            <p:column headerText="Statut" style="width: 15%;">
+                                <h:panelGroup rendered="#{evenement.statut == 'Publié'}">
+                                    <span class="badge-custom badge-actif"><i class="pi pi-check-circle" style="font-size:0.7rem;"></i> Publié</span>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{evenement.statut != 'Publié'}">
+                                    <span class="badge-custom badge-brouillon"><i class="pi pi-exclamation-circle" style="font-size:0.7rem;"></i> #{evenement.statut}</span>
+                                </h:panelGroup>
+                            </p:column>
+
+                            <p:column exportable="false" ariaHeaderText="Actions" style="text-align: right; width: 15%;">
+                                <p:commandButton icon="pi pi-pencil" 
+                                                 styleClass="ui-button-outlined ui-button-secondary rounded-button mr-2" 
+                                                 title="Modifier l'événement (Bientôt disponible)"/>
+                                <p:commandButton icon="pi pi-trash" 
+                                                 styleClass="ui-button-outlined ui-button-danger rounded-button" 
+                                                 title="Supprimer (Bientôt disponible)"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

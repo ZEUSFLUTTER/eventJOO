@@ -3,6 +3,7 @@ package controller;
 import entities.Personne;
 import entities.Personne.Role;
 import service.PersonneService;
+import service.EvenementService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -26,6 +27,9 @@ public class DashboardOrgaBean implements Serializable {
     
     @Inject
     private PersonneService personneService;
+    
+    @Inject
+    private EvenementService evenementService;
     
     @Inject
     private SecurityHelper securityHelper;
@@ -64,7 +68,7 @@ public class DashboardOrgaBean implements Serializable {
             Long organisateurId = organisateurConnecte.getId();
             
             // KPIs spécifiques à cet organisateur
-            mesEvenements = 8; // TODO: service.countEventsByOrganisateur(organisateurId)
+            mesEvenements = evenementService.countEvenementsByOrganisateur(organisateurId);
             billetsVendus = 245; // TODO: service.countBilletsByOrganisateur(organisateurId)
             mesEmployes = 3; // TODO: personneService.countEmployesByOrganisateur(organisateurId)
             mesClients = 156; // TODO: service.countClientsByOrganisateur(organisateurId)
@@ -118,7 +122,7 @@ public class DashboardOrgaBean implements Serializable {
      * Navigation vers la création d'événement
      */
     public String creerEvenement() {
-        return "creer_evenement?faces-redirect=true";
+        return "orga_creer_evenement?faces-redirect=true";
     }
     
     // Getters pour les taux (simulés)

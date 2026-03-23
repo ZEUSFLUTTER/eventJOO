@@ -317,6 +317,12 @@
                                 icon="pi pi-chart-bar"
                                 outcome="dashboard_orga?faces-redirect=true"
                                 rendered="#{authController.utilisateurConnecte.role == 'ORGANISATEUR'}"/>
+                                
+                            <p:menuitem 
+                                value="Mes Événements" 
+                                icon="pi pi-calendar"
+                                outcome="orga_evenements?faces-redirect=true"
+                                rendered="#{authController.utilisateurConnecte.role == 'ORGANISATEUR'}"/>
                             
                             <p:menuitem 
                                 value="Gérer mes Utilisateurs" 

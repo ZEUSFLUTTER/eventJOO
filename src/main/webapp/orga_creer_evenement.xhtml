@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Créer un Événement</ui:define>
+
+    <ui:define name="pageIcon">
+        <i class="pi pi-sparkles text-warning" style="font-size: 1.5rem;"></i>
+    </ui:define>
+
+    <ui:define name="pageTitle">Nouvel Événement</ui:define>
+
+    <ui:define name="content">
+        <style>
+            .premium-card {
+                background: #ffffff;
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                padding: 2.5rem;
+                margin-bottom: 2rem;
+            }
+            .section-title {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin-bottom: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .section-subtitle {
+                font-size: 0.9rem;
+                color: #6c757d;
+                margin-bottom: 2rem;
+            }
+            /* Custom Inputs */
+            body .ui-inputfield {
+                padding: 0.75rem 1rem;
+                border-radius: 8px;
+                background-color: #f8fbff;
+                border: 1px solid #ced4da;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            body .ui-inputfield:focus {
+                border-color: #0047FF;
+                box-shadow: 0 0 0 0.2rem rgba(0, 71, 255, 0.25);
+            }
+            /* Category Table styling */
+            .cat-table-header {
+                font-weight: 700 !important;
+                background: #f8fbff !important;
+                color: #333 !important;
+                border: none !important;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                letter-spacing: 1px;
+            }
+            .btn-action-primary {
+                background: #0047FF !important;
+                border-color: #0047FF !important;
+                padding: 0.75rem 2rem !important;
+                font-weight: 600 !important;
+                border-radius: 50px !important;
+                letter-spacing: 0.5px !important;
+                box-shadow: 0 4px 15px rgba(0,71,255,0.3) !important;
+            }
+            .btn-action-primary:hover {
+                background: #0039CC !important;
+                border-color: #0039CC !important;
+                transform: translateY(-2px);
+            }
+            .input-label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 0.5rem;
+                display: block;
+            }
+        </style>
+
+        <h:form id="formCreerEvenement">
+            <p:growl id="messages" showDetail="true" />
+
+            <div class="row">
+                <!-- Colonne Gauche: Infos Générales -->
+                <div class="col-12 col-xl-7">
+                    <div class="premium-card">
+                        <div class="section-title">
+                            <i class="pi pi-align-left text-primary"></i> Détails de l'Événement
+                        </div>
+                        <p class="section-subtitle">Renseignez les informations essentielles pour attirer votre public.</p>
+                        
+                        <div class="ui-fluid formgrid grid">
+                            <div class="field col-12 mb-4">
+                                <h:outputLabel for="titre" value="Nom de l'événement" styleClass="input-label"/>
+                                <p:inputText id="titre" value="#{orgaEvenementController.nouvelEvenement.titre}" required="true" requiredMessage="Le titre est requis." placeholder="Ex: Concert Symphonique d'Hiver"/>
+                            </div>
+                            
+                            <div class="field col-12 mb-4">
+                                <h:outputLabel for="description" value="Description accrocheuse" styleClass="input-label"/>
+                                <p:inputTextarea id="description" value="#{orgaEvenementController.nouvelEvenement.description}" rows="5" placeholder="Parlez de votre événement pour donner envie..."/>
+                            </div>
+
+                            <div class="field col-12 md:col-6 mb-4">
+                                <h:outputLabel for="lieu" value="Adresse ou Lieu" styleClass="input-label"/>
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon" style="background:#f8fbff; border-radius:8px 0 0 8px;"><i class="pi pi-map-marker"></i></span>
+                                    <p:inputText id="lieu" value="#{orgaEvenementController.nouvelEvenement.lieu}" required="true" requiredMessage="Le lieu est requis." placeholder="Palais des Congrès" style="border-radius:0 8px 8px 0;"/>
+                                </div>
+                            </div>
+
+                            <div class="field col-12 md:col-6 mb-4">
+                                <h:outputLabel for="dateEvent" value="Date et Heure du lancement" styleClass="input-label"/>
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon" style="background:#f8fbff; border-radius:8px 0 0 8px;"><i class="pi pi-calendar"></i></span>
+                                    <p:datePicker id="dateEvent" value="#{orgaEvenementController.nouvelEvenement.dateEvenement}" showTime="true" required="true" requiredMessage="La date est requise." style="border-radius:0 8px 8px 0;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne Droite: Billetterie -->
+                <div class="col-12 col-xl-5">
+                    <div class="premium-card">
+                        <div class="section-title">
+                            <i class="pi pi-ticket text-success"></i> Configuration Billetterie
+                        </div>
+                        <p class="section-subtitle">Créez les différentes offres (VIP, Standard...) pour cet événement.</p>
+                        
+                        <div class="ui-fluid formgrid grid mb-4" style="background: #f8fbff; padding: 1.5rem; border-radius: 8px; border: 1px dashed #ced4da;">
+                            <div class="field col-12 mb-3">
+                                <h:outputLabel for="catNom" value="Type de billet" styleClass="input-label" style="font-size:0.85rem;"/>
+                                <p:inputText id="catNom" value="#{orgaEvenementController.nouvelleCategorie.nom}" placeholder="Pass Premium, Standard..." />
+                            </div>
+                            <div class="field col-6 mb-3">
+                                <h:outputLabel for="catPrix" value="Prix unitaire" styleClass="input-label" style="font-size:0.85rem;"/>
+                                <p:inputNumber id="catPrix" value="#{orgaEvenementController.nouvelleCategorie.prix}" symbol=" FCFA" symbolPosition="s" decimalSeparator="," thousandSeparator="." placeholder="0" />
+                            </div>
+                            <div class="field col-6 mb-3">
+                                <h:outputLabel for="catQte" value="Stock" styleClass="input-label" style="font-size:0.85rem;"/>
+                                <p:spinner id="catQte" value="#{orgaEvenementController.nouvelleCategorie.quantiteTotale}" min="1" />
+                            </div>
+                            <div class="field col-12 mb-0">
+                                <p:commandButton value="Ajouter cette offre" action="#{orgaEvenementController.ajouterCategorie}" 
+                                                 update="@form" styleClass="ui-button-success" icon="pi pi-plus" style="width: 100%; border-radius: 8px;" />
+                            </div>
+                        </div>
+
+                        <!-- Liste des catégories ajoutées -->
+                        <p:dataTable id="dt-categories" var="categorie" value="#{orgaEvenementController.nouvelEvenement.categoriesBillets}" 
+                                     emptyMessage="Aucune tarification configurée." styleClass="mb-4">
+                            <p:column headerText="Type" styleClass="cat-table-header">
+                                <h:outputText value="#{categorie.nom}" style="font-weight: 600;" />
+                            </p:column>
+                            <p:column headerText="Prix" styleClass="cat-table-header">
+                                <h:outputText value="#{categorie.prix}">
+                                    <f:convertNumber type="currency" currencySymbol="F" maxFractionDigits="0"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Qte" style="width: 4rem; text-align: center;" styleClass="cat-table-header">
+                                <h:outputText value="#{categorie.quantiteTotale}" />
+                            </p:column>
+                            <p:column style="width: 3rem; text-align: center;">
+                                <p:commandButton icon="pi pi-times" styleClass="ui-button-danger ui-button-flat rounded-button" 
+                                                 action="#{orgaEvenementController.supprimerCategorie(categorie)}" update="@form" />
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+
+                    <!-- Actions Boutons -->
+                    <div class="d-flex justify-content-end align-items-center gap-3 mt-4">
+                        <p:button outcome="orga_evenements" value="Annuler" styleClass="ui-button-flat ui-button-secondary" style="font-weight: 600;" />
+                        <p:commandButton value="Lancer l'Événement" action="#{orgaEvenementController.sauvegarderEvenement}" 
+                                         styleClass="btn-action-primary" icon="pi pi-rocket" update="messages formCreerEvenement" />
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

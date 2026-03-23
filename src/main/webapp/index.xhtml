@@ -7,25 +7,378 @@
                 xmlns:ui="jakarta.faces.facelets"
                 template="/WEB-INF/public_template.xhtml">
     
-    <ui:define name="title">EventPlatform - Découvrez les meilleurs événements</ui:define>
+    <ui:define name="title">EventPlatform - Plongez dans l'Expérience</ui:define>
     
     <ui:define name="content">
-        <!-- Hero Section -->
+        <style>
+            /* <![CDATA[ */
+            /* OVERRIDE PUBLIC TEMPLATE FOR PREMIUM INDEX */
+            
+            /* Typography and Colors */
+            :root {
+                --brand-primary: #FF3366;
+                --brand-secondary: #FF9933;
+                --brand-dark: #0f172a;
+                --glass-bg: rgba(255, 255, 255, 0.1);
+                --glass-border: rgba(255, 255, 255, 0.2);
+            }
+
+            body {
+                background-color: #f8fafc !important;
+                font-family: 'Inter', 'Segoe UI', sans-serif !important;
+            }
+
+            /* Stunning Hero Section */
+            .hero-section {
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%) !important;
+                padding: 120px 0 160px 0 !important;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .hero-section::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,51,102,0.15) 0%, rgba(0,0,0,0) 50%);
+                z-index: 1;
+            }
+
+            .hero-title {
+                font-size: 4rem !important;
+                font-weight: 800 !important;
+                background: linear-gradient(to right, #ffffff, #e2e8f0);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 1.5rem !important;
+                letter-spacing: -1px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.25rem !important;
+                color: #94a3b8 !important;
+                font-weight: 400;
+                margin-bottom: 3.5rem !important;
+            }
+
+            /* Glassmorphism Search Bar */
+            .search-container {
+                position: relative;
+                z-index: 3;
+                max-width: 800px !important;
+                margin: 0 auto;
+            }
+
+            .search-form {
+                background: var(--glass-bg) !important;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid var(--glass-border) !important;
+                border-radius: 20px !important;
+                padding: 10px;
+                display: flex;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+            }
+
+            .search-input {
+                flex: 1;
+                background: transparent !important;
+                color: white !important;
+                border: none !important;
+                padding: 15px 25px !important;
+                font-size: 1.1rem !important;
+            }
+
+            .search-input::placeholder {
+                color: rgba(255, 255, 255, 0.6) !important;
+            }
+
+            .search-btn {
+                background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary)) !important;
+                border: none !important;
+                border-radius: 12px !important;
+                color: white !important;
+                padding: 15px 40px !important;
+                font-weight: 700 !important;
+                font-size: 1.1rem !important;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                box-shadow: 0 10px 15px -3px rgba(255, 51, 102, 0.3) !important;
+                transition: transform 0.3s, box-shadow 0.3s !important;
+            }
+
+            .search-btn:hover {
+                transform: translateY(-3px) !important;
+                box-shadow: 0 20px 25px -5px rgba(255, 51, 102, 0.4) !important;
+            }
+
+            /* Section Title */
+            .section-title {
+                font-size: 2.5rem !important;
+                font-weight: 800 !important;
+                color: var(--brand-dark) !important;
+                margin-bottom: 3rem !important;
+                position: relative;
+                display: inline-block;
+            }
+            .section-title::after {
+                content: '';
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 4px;
+                background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary));
+                border-radius: 2px;
+            }
+
+            /* Event Cards Premium */
+            .event-card {
+                background: white !important;
+                border-radius: 20px !important;
+                border: none !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
+                transition: transform 0.4s ease, box-shadow 0.4s ease !important;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            .event-card:hover {
+                transform: translateY(-10px) !important;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+            }
+
+            .event-image {
+                height: 220px !important;
+                background: linear-gradient(45deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+            
+            /* Dynamic Image Background Patterns based on category */
+            .event-image::before {
+                content: '';
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background-size: cover;
+                background-position: center;
+                opacity: 0.8;
+                transition: transform 0.5s ease;
+            }
+            
+            .event-card:hover .event-image::before {
+                transform: scale(1.05);
+            }
+
+            .event-image i {
+                font-size: 4rem !important;
+                color: white !important;
+                z-index: 2;
+                text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+
+            .event-date-badge {
+                position: absolute !important;
+                top: 15px !important;
+                left: 15px !important;
+                right: auto !important;
+                background: rgba(255,255,255,0.95) !important;
+                color: var(--brand-primary) !important;
+                backdrop-filter: blur(5px);
+                padding: 10px 15px !important;
+                border-radius: 12px !important;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Make the datetext block look like a real calendar icon */
+            .event-date-badge span {
+                display: block;
+                line-height: 1.1;
+            }
+            .event-date-badge span:first-child {
+                font-size: 1.2rem;
+                font-weight: 800;
+                color: var(--brand-dark);
+            }
+            .event-date-badge span:last-child {
+                font-size: 0.8rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .event-price-tag {
+                position: absolute;
+                bottom: 15px;
+                right: 15px;
+                background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary));
+                color: white;
+                padding: 6px 14px;
+                border-radius: 30px;
+                font-weight: 700;
+                font-size: 0.9rem;
+                box-shadow: 0 4px 10px rgba(255, 51, 102, 0.3);
+                z-index: 2;
+            }
+
+            .event-body {
+                padding: 25px !important;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                background: white;
+            }
+
+            .event-title {
+                font-size: 1.4rem !important;
+                font-weight: 800 !important;
+                color: var(--brand-dark) !important;
+                margin-bottom: 12px !important;
+                line-height: 1.3 !important;
+            }
+
+            .event-location {
+                color: #64748b !important;
+                font-size: 0.9rem !important;
+                font-weight: 500;
+                margin-bottom: 15px !important;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .event-location i {
+                color: var(--brand-primary);
+            }
+
+            .event-description {
+                color: #475569 !important;
+                font-size: 0.95rem !important;
+                line-height: 1.6 !important;
+                margin-bottom: 25px !important;
+                flex-grow: 1;
+            }
+
+            .btn-event {
+                background: #f1f5f9 !important;
+                color: var(--brand-dark) !important;
+                border: 1px solid #e2e8f0 !important;
+                padding: 12px !important;
+                border-radius: 12px !important;
+                font-weight: 700 !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .btn-event:hover {
+                background: var(--brand-dark) !important;
+                color: white !important;
+                border-color: var(--brand-dark) !important;
+                box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15) !important;
+            }
+
+            /* CTA Section Premium */
+            .cta-section {
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;
+                border: none !important;
+                border-radius: 24px !important;
+                padding: 4rem 3rem !important;
+                color: white;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+            }
+
+            .cta-section::after {
+                content: '';
+                position: absolute;
+                top: 0; right: 0;
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(circle, rgba(255,153,51,0.2) 0%, rgba(0,0,0,0) 70%);
+                border-radius: 50%;
+                transform: translate(30%, -30%);
+            }
+
+            .cta-title {
+                font-size: 2.5rem !important;
+                font-weight: 800 !important;
+                color: white !important;
+            }
+
+            .cta-subtitle {
+                color: #94a3b8 !important;
+                font-size: 1.2rem !important;
+                margin-bottom: 3rem !important;
+            }
+
+            .btn-cta {
+                background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary)) !important;
+                border: none !important;
+                border-radius: 50px !important;
+                padding: 18px 40px !important;
+                font-size: 1.1rem !important;
+                box-shadow: 0 10px 25px rgba(255, 51, 102, 0.3) !important;
+            }
+
+            .btn-cta:hover {
+                transform: translateY(-3px) !important;
+                box-shadow: 0 15px 35px rgba(255, 51, 102, 0.4) !important;
+            }
+
+            /* Wave Divider */
+            .custom-shape-divider-bottom {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                overflow: hidden;
+                line-height: 0;
+                transform: rotate(180deg);
+            }
+
+            .custom-shape-divider-bottom svg {
+                position: relative;
+                display: block;
+                width: calc(100% + 1.3px);
+                height: 70px;
+            }
+
+            .custom-shape-divider-bottom .shape-fill {
+                fill: #f8fafc;
+            }
+            /* ]]> */
+        </style>
+
+        <!-- Premium Hero Section -->
         <section class="hero-section">
-            <div class="container">
-                <h1 class="hero-title">Découvrez des événements extraordinaires</h1>
-                <p class="hero-subtitle">Trouvez et réservez les meilleurs événements près de chez vous</p>
+            <div class="container" style="position: relative; z-index: 2;">
+                <h1 class="hero-title">Vivez des <span style="background: linear-gradient(to right, #FF3366, #FF9933); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">émotions</span> uniques</h1>
+                <p class="hero-subtitle">La plateforme n°1 pour découvrir et réserver vos prochains événements incontournables.</p>
                 
-                <!-- Barre de recherche -->
+                <!-- Barre de recherche Glassmorphism -->
                 <div class="search-container">
                     <h:form>
                         <div class="search-form">
+                            <i class="pi pi-search" style="color: rgba(255,255,255,0.6); font-size: 1.5rem; padding: 15px 0 15px 20px;"></i>
                             <p:inputText 
                                 value="#{indexController.rechercheTexte}"
-                                placeholder="Rechercher des événements, concerts, conférences..."
+                                placeholder="Concerts, festivals, conférences..."
                                 styleClass="search-input"/>
                             <p:commandButton 
-                                value="Rechercher"
+                                value="Explorer"
                                 action="#{indexController.rechercher()}"
                                 styleClass="search-btn"
                                 update="@form"
@@ -34,24 +387,36 @@
                     </h:form>
                 </div>
             </div>
+            <!-- Wave -->
+            <div class="custom-shape-divider-bottom">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>
         </section>
         
         <!-- Section des événements -->
-        <section class="main-content">
+        <section class="main-content" style="padding-top: 4rem;">
             <div class="container">
-                <h2 class="section-title">Événements populaires</h2>
+                <div class="text-center">
+                    <h2 class="section-title">À la Une cette semaine</h2>
+                </div>
                 
-                <!-- Grille d'événements avec Bootstrap -->
-                <div class="row g-4">
+                <!-- Grille d'événements -->
+                <div class="row g-5">
                     <ui:repeat value="#{indexController.evenements}" var="event">
                         <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="card event-card">
-                                <!-- Image de l'événement -->
+                                <!-- Image et Badges -->
                                 <div class="event-image">
-                                    <i class="#{event.icone}"></i>
                                     <div class="event-date-badge">
                                         <h:outputText value="#{event.date}" escape="false"/>
                                     </div>
+                                    <i class="#{event.icone}"></i>
+                                    <div class="event-price-tag">#{event.prix == 'Gratuit' ? 'Entrée Libre' : event.prix}</div>
+                                    
+                                    <!-- Dynamic overlay gradient to make it look distinct -->
+                                    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(255,51,102,0.8) 0%, rgba(255,153,51,0.8) 100%); mix-blend-mode: overlay;"></div>
                                 </div>
                                 
                                 <!-- Corps de la carte -->
@@ -60,39 +425,47 @@
                                     
                                     <div class="event-location">
                                         <i class="pi pi-map-marker"></i>
-                                        #{event.lieu}
+                                        <span>#{event.lieu}</span>
                                     </div>
-                                    
-                                    <div class="event-price">#{event.prix}</div>
                                     
                                     <p class="event-description">#{event.description}</p>
                                     
-                                    <h:form>
-                                        <p:commandButton 
-                                            value="Voir les détails"
-                                            styleClass="btn-event"
-                                            action="#{indexController.voirDetails(event)}"
-                                            update=":growl"
-                                            process="@this"/>
-                                    </h:form>
+                                    <div class="mt-auto">
+                                        <h:form>
+                                            <p:commandButton 
+                                                value="Réserver ma place"
+                                                styleClass="btn-event"
+                                                icon="pi pi-bookmark"
+                                                iconPos="right"
+                                                action="#{indexController.voirDetails(event)}"
+                                                update=":growl"
+                                                process="@this"/>
+                                        </h:form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </ui:repeat>
                 </div>
                 
-                <!-- Section d'appel à l'action -->
+                <!-- Section d'appel à l'action Premium -->
                 <div class="cta-section">
-                    <h3 class="cta-title">Vous organisez des événements ?</h3>
-                    <p class="cta-subtitle">
-                        Rejoignez EventPlatform et commencez à vendre vos billets dès aujourd'hui
-                    </p>
-                    <h:form>
-                        <h:link outcome="login" styleClass="btn-cta">
-                            <i class="pi pi-plus"></i>
-                            Créer un événement
-                        </h:link>
-                    </h:form>
+                    <div class="row align-items-center">
+                        <div class="col-lg-8 text-lg-start text-center">
+                            <h3 class="cta-title">Vous êtes organisateur ?</h3>
+                            <p class="cta-subtitle">
+                                Créez, gérez et boostez vos événements avec notre plateforme intuitive. Vendez vos billets en moins de 5 minutes.
+                            </p>
+                        </div>
+                        <div class="col-lg-4 text-center text-lg-end">
+                            <h:form>
+                                <h:link outcome="login" styleClass="btn-cta">
+                                    Créer mon événement
+                                    <i class="pi pi-arrow-right" style="margin-left: 8px;"></i>
+                                </h:link>
+                            </h:form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

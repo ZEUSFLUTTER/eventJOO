@@ -18,8 +18,8 @@ import lombok.Setter;
 @Setter
 public class Organisateur extends Personne {
     
-    /*@OneToMany(mappedBy = "organisateur", cascade = CascadeType.ALL)
-    private List<Evenement> evenements = new ArrayList<>();*/
+    @OneToMany(mappedBy = "organisateur", cascade = CascadeType.ALL)
+    private List<Evenement> evenements = new ArrayList<>();
     
     @OneToMany(mappedBy = "employeur", cascade = CascadeType.ALL)
     private List<Employe> employes = new ArrayList<>();
