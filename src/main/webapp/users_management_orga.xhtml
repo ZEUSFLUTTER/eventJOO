@@ -1,0 +1,550 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+    
+    <ui:define name="title">Gestion des Utilisateurs - Organisateur</ui:define>
+    
+    <ui:define name="pageIcon">
+        <i class="pi pi-id-card"></i>
+    </ui:define>
+    
+    <ui:define name="pageTitle">
+        Mes Utilisateurs
+    </ui:define>
+    
+    <ui:define name="content">
+        <style>
+            /* EventPlatform Clean Style */
+            .orga-header {
+                background: white;
+                border-radius: 12px;
+                padding: 25px 30px;
+                margin-bottom: 25px;
+                box-shadow: 0 2px 8px rgba(0, 71, 255, 0.1);
+                border: 1px solid #e5e7eb;
+            }
+            
+            .orga-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: #2c3e50;
+                margin: 0 0 8px 0;
+            }
+            
+            .orga-subtitle {
+                color: #6c757d;
+                font-size: 14px;
+                margin: 0;
+            }
+            
+            .toolbar-container {
+                background: white;
+                border-radius: 12px;
+                padding: 20px 25px;
+                margin-bottom: 25px;
+                box-shadow: 0 2px 8px rgba(0, 71, 255, 0.1);
+                border: 1px solid #e5e7eb;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .search-section {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                flex: 1;
+                min-width: 300px;
+            }
+            
+            .search-wrapper {
+                position: relative;
+                flex: 1;
+                max-width: 400px;
+            }
+            
+            .search-wrapper .ui-inputtext {
+                width: 100% !important;
+                padding: 12px 16px 12px 45px !important;
+                border: 2px solid #e1e8ed !important;
+                border-radius: 8px !important;
+                font-size: 14px !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .search-wrapper .ui-inputtext:focus {
+                border-color: #0047FF !important;
+                box-shadow: 0 0 0 3px rgba(0, 71, 255, 0.1) !important;
+                outline: none !important;
+            }
+            
+            .search-icon {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6c757d;
+                font-size: 16px;
+                z-index: 10;
+            }
+            
+            .actions-section {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .btn-primary-orga {
+                background: linear-gradient(135deg, #0047FF 0%, #0039CC 100%) !important;
+                border: none !important;
+                color: white !important;
+                padding: 12px 20px !important;
+                border-radius: 8px !important;
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                transition: all 0.3s ease !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+            }
+            
+            .btn-primary-orga:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 71, 255, 0.3) !important;
+            }
+            
+            .table-wrapper {
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 71, 255, 0.1);
+                border: 1px solid #e5e7eb;
+            }
+            
+            .orga-table {
+                padding: 0 !important;
+            }
+            
+            .orga-table .ui-datatable {
+                border: none !important;
+                box-shadow: none !important;
+            }
+            
+            .orga-table .ui-datatable-thead > tr > th {
+                background: transparent !important;
+                color: #6c757d !important;
+                font-weight: 600 !important;
+                font-size: 12px !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                padding: 16px 24px !important;
+                border: none !important;
+                border-bottom: 1px solid #f1f3f5 !important;
+            }
+            
+            .orga-table .ui-datatable-data > tr > td {
+                padding: 20px 24px !important;
+                border: none !important;
+                border-bottom: 1px solid #f1f3f5 !important;
+                font-size: 14px !important;
+                color: #1a1a1a !important;
+                vertical-align: middle !important;
+            }
+            
+            .orga-table .ui-datatable-data > tr:hover {
+                background: #f8f9fa !important;
+            }
+            
+            .orga-table .ui-datatable-data > tr:last-child > td {
+                border-bottom: none !important;
+            }
+            
+            .user-cell {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #0047FF 0%, #0039CC 100%);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 14px;
+                flex-shrink: 0;
+            }
+            
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .user-name {
+                font-weight: 600;
+                font-size: 14px;
+                color: #1a1a1a;
+            }
+            
+            .user-email {
+                font-size: 13px;
+                color: #6c757d;
+            }
+            
+            .ui-tag {
+                padding: 4px 12px !important;
+                border-radius: 6px !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+            }
+            
+            .tag-client {
+                background: #e8f5e9 !important;
+                color: #2e7d32 !important;
+            }
+            
+            .tag-employe {
+                background: #fff3e0 !important;
+                color: #f57c00 !important;
+            }
+            
+            .modal-form .ui-dialog {
+                border-radius: 12px !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            }
+            
+            .modal-form .ui-dialog-titlebar {
+                background: white !important;
+                border: none !important;
+                border-bottom: 1px solid #f1f3f5 !important;
+                padding: 20px 24px !important;
+            }
+            
+            .modal-form .ui-dialog-title {
+                font-size: 18px !important;
+                font-weight: 700 !important;
+                color: #1a1a1a !important;
+            }
+            
+            .modal-form .ui-dialog-content {
+                padding: 24px !important;
+            }
+            
+            .form-field {
+                margin-bottom: 20px;
+            }
+            
+            .form-field label {
+                display: block;
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+            
+            .ui-inputtext, .ui-selectonemenu, .ui-password input {
+                width: 100% !important;
+                padding: 12px 16px !important;
+                border: 2px solid #e1e8ed !important;
+                border-radius: 8px !important;
+                font-size: 15px !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .ui-inputtext:focus, .ui-selectonemenu:focus, .ui-password input:focus {
+                border-color: #0047FF !important;
+                box-shadow: 0 0 0 3px rgba(0, 71, 255, 0.1) !important;
+                outline: none !important;
+            }
+        </style>
+        
+        <!-- FORMULAIRE PRINCIPAL -->
+        <h:form id="mainForm">
+            <!-- Header Section -->
+            <div class="orga-header">
+                <h2 class="orga-title">Gestion de mes Utilisateurs</h2>
+                <p class="orga-subtitle">Gérer les employés et clients liés à votre organisation.</p>
+            </div>
+            
+            <!-- Toolbar -->
+            <div class="toolbar-container">
+                <div class="search-section">
+                    <div class="search-wrapper">
+                        <i class="pi pi-search search-icon"></i>
+                        <p:inputText 
+                            value="#{userOrgaController.rechercheTexte}"
+                            placeholder="Rechercher des utilisateurs..."
+                            styleClass="search-field"/>
+                    </div>
+                </div>
+                
+                <div class="actions-section">
+                    <p:commandButton 
+                        value="Nouvel Utilisateur"
+                        icon="pi pi-plus"
+                        styleClass="btn-primary-orga"
+                        action="#{userOrgaController.preparerAjout()}"
+                        update=":addUserForm"
+                        oncomplete="PF('addUserDialog').show()"
+                        process="@none"/>
+                </div>
+            </div>
+            
+            <!-- Table Container -->
+            <div class="table-wrapper">
+                <h:panelGroup rendered="#{userOrgaController.utilisateursFiltres != null}">
+                    <p:dataTable 
+                        id="tableUtilisateurs"
+                        widgetVar="tableUtilisateursWidget"
+                        value="#{userOrgaController.utilisateursFiltres}" 
+                        var="user"
+                        rowKey="#{user.id}"
+                        emptyMessage="Aucun utilisateur trouvé"
+                        paginator="true"
+                        rows="10"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                        currentPageReportTemplate="Affichage de {startRecord} à {endRecord} sur {totalRecords} utilisateurs"
+                        styleClass="orga-table">
+                        
+                        <!-- Colonne Utilisateur -->
+                        <p:column headerText="Utilisateur" style="width: 45%;">
+                            <h:panelGroup rendered="#{user != null}">
+                                <div class="user-cell">
+                                    <div class="user-avatar">
+                                        <h:outputText value="#{user.nom.substring(0,1)}#{user.prenom.substring(0,1)}" 
+                                                      rendered="#{not empty user.nom and not empty user.prenom and user.nom.length() > 0 and user.prenom.length() > 0}"/>
+                                        <h:outputText value="??" rendered="#{empty user.nom or empty user.prenom or user.nom.length() == 0 or user.prenom.length() == 0}"/>
+                                    </div>
+                                    <div class="user-info">
+                                        <div class="user-name">#{user.prenom} #{user.nom}</div>
+                                        <div class="user-email">#{user.email}</div>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </p:column>
+                    
+                        <!-- Colonne Rôle -->
+                        <p:column headerText="Rôle" style="width: 25%; text-align: center;">
+                            <h:panelGroup rendered="#{user != null and user.role != null}">
+                                <p:tag 
+                                    value="#{user.role}" 
+                                    styleClass="#{user.role == 'CLIENT' ? 'tag-client' : 'tag-employe'}"/>
+                            </h:panelGroup>
+                        </p:column>
+                        
+                        <!-- Colonne Inscription -->
+                        <p:column headerText="Inscription" style="width: 20%;">
+                            <span style="color: #6c757d;">
+                                <h:outputText value="#{userOrgaController.getDateInscription(user)}" 
+                                              rendered="#{user != null}"/>
+                                <h:outputText value="Non renseignée" 
+                                              rendered="#{user == null}"/>
+                            </span>
+                        </p:column>
+                        
+                        <!-- Colonne Actions -->
+                        <p:column headerText="Actions" style="width: 10%; text-align: center;">
+                            <h:panelGroup rendered="#{user != null}">
+                                <h:form>
+                                    <p:menuButton value="Actions" icon="pi pi-cog" styleClass="p-button-sm">
+                                        <p:menuitem 
+                                            value="Voir" 
+                                            icon="pi pi-eye"
+                                            action="#{userOrgaController.voirDetails(user)}"
+                                            update=":detailsForm"
+                                            oncomplete="PF('dialogDetails').show()"
+                                            process="@this"/>
+                                            
+                                        <p:menuitem 
+                                            value="Modifier" 
+                                            icon="pi pi-pencil"
+                                            action="#{userOrgaController.preparerModification(user)}"
+                                            update=":addUserForm"
+                                            oncomplete="PF('addUserDialog').show()"
+                                            process="@this"/>
+                                            
+                                        <p:menuitem 
+                                            value="Supprimer" 
+                                            icon="pi pi-trash"
+                                            onclick="PF('confirmDialog').show()"
+                                            process="@none">
+                                            <f:setPropertyActionListener 
+                                                target="#{userOrgaController.utilisateurASupprimer}" 
+                                                value="#{user}"/>
+                                        </p:menuitem>
+                                    </p:menuButton>
+                                </h:form>
+                            </h:panelGroup>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+                
+                <h:panelGroup rendered="#{userOrgaController.utilisateursFiltres == null}">
+                    <div style="padding: 20px; text-align: center;">
+                        <p>Erreur de chargement des données.</p>
+                    </div>
+                </h:panelGroup>
+            </div>
+        </h:form>
+        
+        <!-- Dialog d'ajout/modification d'utilisateur -->
+        <p:dialog header="#{userOrgaController.modeEdition ? 'Modifier un Utilisateur' : 'Ajouter un Utilisateur'}" 
+                  widgetVar="addUserDialog" modal="true" 
+                  responsive="true" width="600" closeOnEscape="true" styleClass="modal-form">
+            <h:form id="addUserForm">
+                <div class="form-field">
+                    <label>Nom *</label>
+                    <p:inputText 
+                        value="#{userOrgaController.nouvelUtilisateur.nom}" 
+                        required="true"
+                        requiredMessage="Le nom est obligatoire"
+                        placeholder="Nom de famille"/>
+                </div>
+                
+                <div class="form-field">
+                    <label>Prénom *</label>
+                    <p:inputText 
+                        value="#{userOrgaController.nouvelUtilisateur.prenom}" 
+                        required="true"
+                        requiredMessage="Le prénom est obligatoire"
+                        placeholder="Prénom"/>
+                </div>
+                
+                <div class="form-field">
+                    <label>Email *</label>
+                    <p:inputText 
+                        value="#{userOrgaController.nouvelUtilisateur.email}" 
+                        required="true"
+                        requiredMessage="L'email est obligatoire"
+                        placeholder="exemple@email.com">
+                        <f:validateRegex pattern="^[A-Za-z0-9+_.-]+@(.+)$" />
+                    </p:inputText>
+                </div>
+                
+                <div class="form-field">
+                    <label>Rôle *</label>
+                    <p:selectOneMenu 
+                        value="#{userOrgaController.roleSelectionne}"
+                        required="true"
+                        requiredMessage="Le rôle est obligatoire">
+                        <f:selectItem itemLabel="-- Choisir un rôle --" itemValue="" noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Client" itemValue="CLIENT"/>
+                        <f:selectItem itemLabel="Employé" itemValue="EMPLOYE"/>
+                        <p:ajax listener="#{userOrgaController.onRoleChange()}" update=":addUserForm"/>
+                    </p:selectOneMenu>
+                </div>
+                
+                <div class="form-field">
+                    <label>Mot de passe #{userOrgaController.modeEdition ? '(laisser vide pour conserver)' : '*'}</label>
+                    <p:password 
+                        value="#{userOrgaController.nouvelUtilisateur.motDePasse}" 
+                        required="#{!userOrgaController.modeEdition}"
+                        requiredMessage="Le mot de passe est obligatoire"
+                        feedback="false"
+                        placeholder="#{userOrgaController.modeEdition ? 'Nouveau mot de passe (optionnel)' : 'Minimum 8 caractères'}">
+                        <f:validateLength minimum="8" disabled="#{userOrgaController.modeEdition and empty userOrgaController.nouvelUtilisateur.motDePasse}"/>
+                    </p:password>
+                </div>
+                
+                <div style="text-align: right; margin-top: 20px;">
+                    <p:commandButton 
+                        value="Annuler"
+                        styleClass="p-button-secondary"
+                        onclick="PF('addUserDialog').hide(); return false;"
+                        process="@none"
+                        style="margin-right: 10px;"/>
+                        
+                    <p:commandButton 
+                        value="#{userOrgaController.modeEdition ? 'Modifier' : 'Ajouter'}"
+                        icon="pi pi-#{userOrgaController.modeEdition ? 'pencil' : 'plus'}"
+                        styleClass="btn-primary-orga"
+                        action="#{userOrgaController.sauvegarderUtilisateur()}"
+                        update=":addUserForm :mainForm:tableUtilisateurs"
+                        oncomplete="if (!args || !args.validationFailed) PF('addUserDialog').hide()"
+                        process="@form"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Dialog de détails utilisateur -->
+        <p:dialog header="Détails de l'utilisateur" widgetVar="dialogDetails" modal="true" 
+                  responsive="true" width="500" closeOnEscape="true" styleClass="modal-form">
+            <h:form id="detailsForm">
+                <div style="padding: 20px;" rendered="#{userOrgaController.utilisateurSelectionne != null}">
+                    <div class="user-cell" style="margin-bottom: 20px;">
+                        <div class="user-avatar" style="width: 60px; height: 60px; font-size: 20px;">
+                            <h:outputText value="#{userOrgaController.utilisateurSelectionne.nom.substring(0,1)}#{userOrgaController.utilisateurSelectionne.prenom.substring(0,1)}" 
+                                          rendered="#{not empty userOrgaController.utilisateurSelectionne.nom and not empty userOrgaController.utilisateurSelectionne.prenom and userOrgaController.utilisateurSelectionne.nom.length() > 0 and userOrgaController.utilisateurSelectionne.prenom.length() > 0}"/>
+                            <h:outputText value="??" rendered="#{empty userOrgaController.utilisateurSelectionne.nom or empty userOrgaController.utilisateurSelectionne.prenom or userOrgaController.utilisateurSelectionne.nom.length() == 0 or userOrgaController.utilisateurSelectionne.prenom.length() == 0}"/>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name" style="font-size: 18px;">#{userOrgaController.utilisateurSelectionne.prenom} #{userOrgaController.utilisateurSelectionne.nom}</div>
+                            <div class="user-email">#{userOrgaController.utilisateurSelectionne.email}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <label style="font-weight: 600; color: #6c757d; font-size: 12px; text-transform: uppercase;">Rôle</label>
+                            <p:tag value="#{userOrgaController.utilisateurSelectionne.role}" 
+                                   styleClass="tag-#{userOrgaController.utilisateurSelectionne.role.toString().toLowerCase()}"
+                                   style="margin-top: 5px;"/>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; color: #6c757d; font-size: 12px; text-transform: uppercase;">Date d'inscription</label>
+                            <div style="margin-top: 5px; font-size: 14px;">#{userOrgaController.getDateInscription(userOrgaController.utilisateurSelectionne)}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="padding: 20px;" rendered="#{userOrgaController.utilisateurSelectionne == null}">
+                    <p>Aucun utilisateur sélectionné.</p>
+                </div>
+                
+                <div style="text-align: right; padding: 20px; border-top: 1px solid #f1f3f5;">
+                    <p:commandButton 
+                        value="Fermer"
+                        styleClass="p-button-secondary"
+                        onclick="PF('dialogDetails').hide(); return false;"
+                        process="@none"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Dialog de confirmation de suppression -->
+        <p:confirmDialog global="false" widgetVar="confirmDialog" 
+                         header="Confirmer la suppression" 
+                         message="Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
+                         responsive="true" width="350">
+            <h:form>
+                <p:commandButton 
+                    value="Oui" 
+                    styleClass="p-button-danger"
+                    icon="pi pi-check"
+                    action="#{userOrgaController.confirmerSuppression()}"
+                    update=":mainForm:tableUtilisateurs"
+                    oncomplete="PF('confirmDialog').hide()"
+                    process="@this"/>
+                    
+                <p:commandButton 
+                    value="Non" 
+                    styleClass="p-button-secondary"
+                    icon="pi pi-times"
+                    onclick="PF('confirmDialog').hide(); return false;"
+                    process="@none"/>
+            </h:form>
+        </p:confirmDialog>
+    </ui:define>
+</ui:composition>

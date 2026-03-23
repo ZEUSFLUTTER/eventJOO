@@ -1,0 +1,463 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+    
+    <ui:define name="title">Paramètres - EventPlatform</ui:define>
+    
+    <ui:define name="pageIcon">
+        <i class="pi pi-cog"></i>
+    </ui:define>
+    
+    <ui:define name="pageTitle">
+        Paramètres
+    </ui:define>
+    
+    <ui:define name="content">
+        <style>
+            /* EventPlatform Settings Design */
+            .settings-container {
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+            
+            .settings-card {
+                background: var(--eventplatform-white);
+                border: 1px solid var(--eventplatform-border);
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                overflow: hidden;
+            }
+            
+            .settings-header {
+                padding: 2rem;
+                border-bottom: 1px solid var(--eventplatform-border);
+                background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            }
+            
+            .settings-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--eventplatform-text);
+                margin: 0 0 0.5rem 0;
+            }
+            
+            .settings-subtitle {
+                font-size: 0.875rem;
+                color: var(--eventplatform-text-muted);
+                margin: 0;
+            }
+            
+            /* PrimeFaces TabView Customization */
+            .ui-tabs {
+                border: none !important;
+                background: transparent !important;
+            }
+            
+            .ui-tabs .ui-tabs-nav {
+                background: transparent !important;
+                border: none !important;
+                border-bottom: 1px solid var(--weezevent-border) !important;
+                padding: 0 2rem !important;
+            }
+            
+            .ui-tabs .ui-tabs-nav li {
+                border: none !important;
+                background: transparent !important;
+                margin-right: 2rem !important;
+            }
+            
+            .ui-tabs .ui-tabs-nav li a {
+                background: transparent !important;
+                border: none !important;
+                color: var(--weezevent-text-muted) !important;
+                font-weight: 500 !important;
+                font-size: 0.875rem !important;
+                padding: 1rem 0 !important;
+                border-bottom: 2px solid transparent !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            .ui-tabs .ui-tabs-nav li.ui-state-active a {
+                color: var(--weezevent-blue) !important;
+                border-bottom-color: var(--weezevent-blue) !important;
+                font-weight: 600 !important;
+            }
+            
+            .ui-tabs .ui-tabs-nav li:hover a {
+                color: var(--weezevent-blue) !important;
+            }
+            
+            .ui-tabs .ui-tabs-panels {
+                background: transparent !important;
+                border: none !important;
+                padding: 2rem !important;
+            }
+            
+            .ui-tabs .ui-tabs-panel {
+                padding: 0 !important;
+            }
+            
+            /* Form Styles */
+            .form-section {
+                margin-bottom: 2rem;
+            }
+            
+            .form-section-title {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: var(--weezevent-text);
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-label {
+                display: block;
+                font-weight: 600;
+                font-size: 0.875rem;
+                color: var(--weezevent-text);
+                margin-bottom: 0.5rem;
+            }
+            
+            .form-help {
+                font-size: 0.75rem;
+                color: var(--weezevent-text-muted);
+                margin-top: 0.25rem;
+            }
+            
+            .ui-inputtext,
+            .ui-password input,
+            .ui-selectonemenu {
+                width: 100% !important;
+                border: 1px solid var(--weezevent-border) !important;
+                border-radius: 8px !important;
+                padding: 0.75rem !important;
+                font-size: 0.875rem !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            .ui-inputtext:focus,
+            .ui-password input:focus {
+                border-color: var(--weezevent-blue) !important;
+                box-shadow: 0 0 0 3px rgba(0, 71, 255, 0.1) !important;
+                outline: none !important;
+            }
+            
+            /* Buttons */
+            .btn-primary {
+                background: var(--weezevent-blue) !important;
+                border: none !important;
+                color: white !important;
+                padding: 0.75rem 1.5rem !important;
+                border-radius: 8px !important;
+                font-weight: 600 !important;
+                font-size: 0.875rem !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            .btn-primary:hover {
+                background: var(--weezevent-blue-dark) !important;
+                transform: translateY(-1px);
+            }
+            
+            .btn-secondary {
+                background: #f8f9fa !important;
+                border: 1px solid var(--weezevent-border) !important;
+                color: var(--weezevent-text) !important;
+                padding: 0.75rem 1.5rem !important;
+                border-radius: 8px !important;
+                font-weight: 600 !important;
+                font-size: 0.875rem !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            .btn-secondary:hover {
+                background: #e9ecef !important;
+            }
+            
+            /* Danger Zone */
+            .danger-zone {
+                margin-top: 3rem;
+                padding: 1.5rem;
+                border: 1px solid #dc3545;
+                border-radius: 8px;
+                background: #fff5f5;
+            }
+            
+            .danger-zone-title {
+                font-size: 1rem;
+                font-weight: 600;
+                color: #dc3545;
+                margin-bottom: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .danger-zone-text {
+                font-size: 0.875rem;
+                color: #721c24;
+                margin-bottom: 1rem;
+            }
+            
+            .btn-danger {
+                background: #dc3545 !important;
+                border: none !important;
+                color: white !important;
+                padding: 0.75rem 1.5rem !important;
+                border-radius: 8px !important;
+                font-weight: 600 !important;
+                font-size: 0.875rem !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            .btn-danger:hover {
+                background: #c82333 !important;
+                transform: translateY(-1px);
+            }
+            
+            /* Avatar Upload */
+            .avatar-section {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .current-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--weezevent-blue) 0%, var(--weezevent-blue-dark) 100%);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 1.5rem;
+                border: 4px solid white;
+                box-shadow: 0 4px 12px rgba(0, 71, 255, 0.3);
+            }
+            
+            .avatar-info {
+                flex: 1;
+            }
+            
+            .avatar-name {
+                font-weight: 600;
+                font-size: 1rem;
+                color: var(--weezevent-text);
+                margin-bottom: 0.25rem;
+            }
+            
+            .avatar-role {
+                font-size: 0.875rem;
+                color: var(--weezevent-text-muted);
+            }
+        </style>
+        
+        <div class="settings-container">
+            <div class="settings-card">
+                <!-- Header -->
+                <div class="settings-header">
+                    <h1 class="settings-title">Paramètres du compte</h1>
+                    <p class="settings-subtitle">Gérez vos informations personnelles et préférences de sécurité</p>
+                </div>
+                
+                <!-- TabView PrimeFaces -->
+                <p:tabView>
+                    <!-- Onglet Profil -->
+                    <p:tab title="Profil">
+                        <h:form id="formProfil">
+                            <!-- Avatar Section -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="pi pi-user"></i>
+                                    Photo de profil
+                                </h3>
+                                <div class="avatar-section">
+                                    <div class="current-avatar">
+                                        #{authController.utilisateurConnecte.nom.substring(0,1)}#{authController.utilisateurConnecte.prenom.substring(0,1)}
+                                    </div>
+                                    <div class="avatar-info">
+                                        <div class="avatar-name">
+                                            #{authController.utilisateurConnecte.prenom} #{authController.utilisateurConnecte.nom}
+                                        </div>
+                                        <div class="avatar-role">
+                                            #{authController.utilisateurConnecte.role}
+                                        </div>
+                                    </div>
+                                    <h:form>
+                                        <p:commandButton 
+                                            value="Changer la photo" 
+                                            styleClass="btn-secondary"
+                                            type="button"/>
+                                    </h:form>
+                                </div>
+                            </div>
+                            
+                            <!-- Informations personnelles -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="pi pi-id-card"></i>
+                                    Informations personnelles
+                                </h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Prénom</label>
+                                    <p:inputText 
+                                        value="#{authController.utilisateurConnecte.prenom}"
+                                        placeholder="Votre prénom"/>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Nom</label>
+                                    <p:inputText 
+                                        value="#{authController.utilisateurConnecte.nom}"
+                                        placeholder="Votre nom"/>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <p:inputText 
+                                        value="#{authController.utilisateurConnecte.email}"
+                                        placeholder="votre@email.com"
+                                        disabled="true"/>
+                                    <div class="form-help">
+                                        L'adresse email ne peut pas être modifiée. Contactez l'administrateur si nécessaire.
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Rôle</label>
+                                    <p:inputText 
+                                        value="#{authController.utilisateurConnecte.role}"
+                                        disabled="true"/>
+                                    <div class="form-help">
+                                        Votre rôle est défini par l'administrateur système.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                <p:commandButton 
+                                    value="Annuler" 
+                                    styleClass="btn-secondary"
+                                    type="button"/>
+                                <p:commandButton 
+                                    value="Sauvegarder les modifications" 
+                                    styleClass="btn-primary"
+                                    update=":growl"
+                                    process="@form"/>
+                            </div>
+                        </h:form>
+                    </p:tab>
+                    
+                    <!-- Onglet Sécurité -->
+                    <p:tab title="Sécurité">
+                        <h:form id="formSecurite">
+                            <!-- Mot de passe -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="pi pi-lock"></i>
+                                    Changer le mot de passe
+                                </h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Mot de passe actuel</label>
+                                    <p:password 
+                                        placeholder="Entrez votre mot de passe actuel"
+                                        feedback="false"/>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Nouveau mot de passe</label>
+                                    <p:password 
+                                        placeholder="Minimum 8 caractères"
+                                        feedback="true"/>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Confirmer le nouveau mot de passe</label>
+                                    <p:password 
+                                        placeholder="Confirmez votre nouveau mot de passe"
+                                        feedback="false"/>
+                                </div>
+                            </div>
+                            
+                            <!-- Sessions actives -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="pi pi-desktop"></i>
+                                    Sessions actives
+                                </h3>
+                                
+                                <div style="background: #f8f9fa; border: 1px solid var(--weezevent-border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="font-weight: 600; color: var(--weezevent-text);">
+                                                <i class="pi pi-desktop" style="margin-right: 0.5rem;"></i>
+                                                Session actuelle
+                                            </div>
+                                            <div style="font-size: 0.875rem; color: var(--weezevent-text-muted);">
+                                                Windows • Chrome • Dernière activité: maintenant
+                                            </div>
+                                        </div>
+                                        <span style="background: #d4edda; color: #155724; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                            ACTUELLE
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <p:commandButton 
+                                    value="Déconnecter toutes les autres sessions" 
+                                    styleClass="btn-secondary"
+                                    type="button"/>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                <p:commandButton 
+                                    value="Annuler" 
+                                    styleClass="btn-secondary"
+                                    type="button"/>
+                                <p:commandButton 
+                                    value="Mettre à jour le mot de passe" 
+                                    styleClass="btn-primary"
+                                    update=":growl"
+                                    process="@form"/>
+                            </div>
+                            
+                            <!-- Zone Dangereuse -->
+                            <div class="danger-zone">
+                                <h4 class="danger-zone-title">
+                                    <i class="pi pi-exclamation-triangle"></i>
+                                    Zone dangereuse
+                                </h4>
+                                <p class="danger-zone-text">
+                                    Les actions suivantes sont irréversibles. Procédez avec prudence.
+                                </p>
+                                <p:commandButton 
+                                    value="Supprimer mon compte" 
+                                    styleClass="btn-danger"
+                                    onclick="return confirm('Êtes-vous absolument sûr ? Cette action est irréversible.');"
+                                    type="button"/>
+                            </div>
+                        </h:form>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
