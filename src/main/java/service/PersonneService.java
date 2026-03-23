@@ -172,19 +172,26 @@ public class PersonneService {
     
     /**
      * Trouve les employés d'un organisateur spécifique
-     * TODO: Implémenter quand la relation employeur_id sera ajoutée à l'entité Employe
      * @param organisateurId L'ID de l'organisateur
      * @return Liste des employés de cet organisateur
      */
     public List<Personne> findEmployesByOrganisateur(Long organisateurId) {
-        // TODO: Implémenter la requête avec employeur_id
-        // TypedQuery<Personne> query = em.createQuery(
-        //     "SELECT e FROM Employe e WHERE e.employeurId = :orgId", Personne.class);
-        // query.setParameter("orgId", organisateurId);
-        // return query.getResultList();
-        
-        // Pour l'instant, retourne une liste vide
-        return List.of();
+        TypedQuery<Personne> query = em.createQuery(
+            "SELECT e FROM Employe e WHERE e.employeur.id = :orgId", Personne.class);
+        query.setParameter("orgId", organisateurId);
+        return query.getResultList();
+    }
+
+    /**
+     * Compte les employés d'un organisateur spécifique
+     * @param organisateurId L'ID de l'organisateur
+     * @return Le nombre d'employés
+     */
+    public long countEmployesByOrganisateur(Long organisateurId) {
+        TypedQuery<Long> query = em.createQuery(
+            "SELECT COUNT(e) FROM Employe e WHERE e.employeur.id = :orgId", Long.class);
+        query.setParameter("orgId", organisateurId);
+        return query.getSingleResult();
     }
     
     /**

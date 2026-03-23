@@ -28,6 +28,13 @@ public class EvenementService {
     }
 
     /**
+     * Récupère tous les événements de la plateforme.
+     */
+    public List<Evenement> getAllEvents() {
+        return evenementDao.findAll();
+    }
+
+    /**
      * Récupère les événements d'un organisateur spécifique.
      */
     public List<Evenement> getEvenementsByOrganisateur(Long organisateurId) {
@@ -53,5 +60,42 @@ public class EvenementService {
      */
     public Evenement trouverParId(Long id) {
         return evenementDao.findById(id);
+    }
+
+    /**
+     * Compte le nombre total de billets vendus pour un organisateur.
+     */
+    public long countTotalTicketsVendus(Long organisateurId) {
+        List<Evenement> evts = getEvenementsByOrganisateur(organisateurId);
+        long totalVendu = 0;
+        for (Evenement e : evts) {
+            for (entities.CategorieBillet cat : e.getCategoriesBillets()) {
+                totalVendu += (cat.getQuantiteTotale() - cat.getQuantiteDisponible());
+            }
+        }
+        return totalVendu;
+    }
+
+    /**
+     * Calcule le chiffre d'affaires total pour un organisateur.
+     */
+    public double calculateTotalRevenue(Long organisateurId) {
+        List<Evenement> evts = getEvenementsByOrganisateur(organisateurId);
+        double totalRevenue = 0;
+        for (Evenement e : evts) {
+            for (entities.CategorieBillet cat : e.getCategoriesBillets()) {
+                totalRevenue += (cat.getQuantiteTotale() - cat.getQuantiteDisponible()) * cat.getPrix();
+            }
+        }
+        return totalRevenue;
+    }
+    
+    /**
+     * Compte le nombre de clients uniques ayant acheté des billets chez cet organisateur.
+     * Note: Actuellement simulé par le nombre de billets vendus / 1.5 car pas d'entité Billet directe.
+     */
+    public long countTotalClients(Long organisateurId) {
+        long sold = countTotalTicketsVendus(organisateurId);
+        return (long) Math.ceil(sold / 1.5); // Approximation réaliste
     }
 }

@@ -20,6 +20,9 @@ public class IndexController implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
+    @Inject
+    private service.EvenementService evenementService;
+
     private List<Evenement> evenements;
     private String rechercheTexte;
     
@@ -29,64 +32,56 @@ public class IndexController implements Serializable {
     }
     
     /**
-     * Charge la liste des événements (simulée)
+     * Charge la liste des événements de la base de données
      */
     private void chargerEvenements() {
+        List<entities.Evenement> realEvents = evenementService.getAllEvents();
         evenements = new ArrayList<>();
         
-        evenements.add(new Evenement(
-            "Festival Jazz 2026",
-            "Paris, France",
-            "15€ - 45€",
-            "Un festival de jazz exceptionnel avec les plus grands artistes internationaux.",
-            "15\nMAR",
-            "pi pi-music"
-        ));
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd\nMMM", java.util.Locale.FRENCH);
         
-        evenements.add(new Evenement(
-            "Conférence Tech Innovation",
-            "Lyon, France",
-            "Gratuit",
-            "Découvrez les dernières innovations technologiques avec des experts du secteur.",
-            "22\nMAR",
-            "pi pi-desktop"
-        ));
+        for (entities.Evenement e : realEvents) {
+            String prixStr = calculatePriceRange(e);
+            String dateStr = sdf.format(e.getDateEvenement()).toUpperCase();
+            String icone = determineIcon(e);
+            
+            evenements.add(new Evenement(
+                e.getTitre(),
+                e.getLieu(),
+                prixStr,
+                e.getDescription(),
+                dateStr,
+                icone
+            ));
+        }
+    }
+
+    private String calculatePriceRange(entities.Evenement e) {
+        if (e.getCategoriesBillets() == null || e.getCategoriesBillets().isEmpty()) {
+            return "Gratuit";
+        }
         
-        evenements.add(new Evenement(
-            "Marathon de Paris",
-            "Paris, France",
-            "25€",
-            "Participez au plus grand marathon de France dans les rues de la capitale.",
-            "05\nAVR",
-            "pi pi-flag"
-        ));
+        double min = Double.MAX_VALUE;
+        double max = 0;
         
-        evenements.add(new Evenement(
-            "Salon du Livre",
-            "Bordeaux, France",
-            "8€ - 12€",
-            "Rencontrez vos auteurs préférés et découvrez les dernières nouveautés littéraires.",
-            "12\nAVR",
-            "pi pi-book"
-        ));
+        for (entities.CategorieBillet cat : e.getCategoriesBillets()) {
+            if (cat.getPrix() < min) min = cat.getPrix();
+            if (cat.getPrix() > max) max = cat.getPrix();
+        }
         
-        evenements.add(new Evenement(
-            "Festival Gastronomique",
-            "Nice, France",
-            "20€ - 35€",
-            "Dégustez les spécialités culinaires de la région avec les meilleurs chefs.",
-            "18\nAVR",
-            "pi pi-star"
-        ));
-        
-        evenements.add(new Evenement(
-            "Concert Rock Summer",
-            "Marseille, France",
-            "30€ - 80€",
-            "Une soirée rock inoubliable avec les groupes les plus populaires du moment.",
-            "25\nAVR",
-            "pi pi-volume-up"
-        ));
+        if (min == 0 && max == 0) return "Gratuit";
+        if (min == max) return String.format("%.0f€", min);
+        return String.format("%.0f€ - %.0f€", min, max);
+    }
+
+    private String determineIcon(entities.Evenement e) {
+        String titre = e.getTitre().toLowerCase();
+        if (titre.contains("concert") || titre.contains("music") || titre.contains("jazz")) return "pi pi-music";
+        if (titre.contains("tech") || titre.contains("conf") || titre.contains("innovation")) return "pi pi-desktop";
+        if (titre.contains("sport") || titre.contains("marathon") || titre.contains("course")) return "pi pi-flag";
+        if (titre.contains("livre") || titre.contains("salon")) return "pi pi-book";
+        if (titre.contains("gastro") || titre.contains("cuisine") || titre.contains("chef")) return "pi pi-star";
+        return "pi pi-calendar"; // Default icon
     }
     
     /**

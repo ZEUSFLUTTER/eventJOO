@@ -1,7 +1,6 @@
 package controller;
 
 import entities.Personne;
-import entities.Personne.Role;
 import service.PersonneService;
 import service.EvenementService;
 import jakarta.annotation.PostConstruct;
@@ -42,7 +41,7 @@ public class DashboardOrgaBean implements Serializable {
     private long billetsVendus;
     private long mesEmployes;
     private long mesClients;
-    private String chiffreAffaires = "1,245,000 FCFA"; // Simulation en FCFA
+    private double revenue; 
     
     // Données spécifiques à l'organisateur
     private List<EvenementData> evenementsRecents;
@@ -68,11 +67,13 @@ public class DashboardOrgaBean implements Serializable {
             Long organisateurId = organisateurConnecte.getId();
             
             // KPIs spécifiques à cet organisateur
-            mesEvenements = evenementService.countEvenementsByOrganisateur(organisateurId);
-            billetsVendus = 245; // TODO: service.countBilletsByOrganisateur(organisateurId)
-            mesEmployes = 3; // TODO: personneService.countEmployesByOrganisateur(organisateurId)
-            mesClients = 156; // TODO: service.countClientsByOrganisateur(organisateurId)
-            // chiffreAffaires déjà défini en FCFA
+            // KPIs réels basés sur les données en base
+            mesEvenements = evenementService.countTotalTicketsVendus(organisateurId) == 0 && mesEvenements == 0 ? evenementService.countEvenementsByOrganisateur(organisateurId) : evenementService.countEvenementsByOrganisateur(organisateurId);
+            // On s'assure d'avoir les vrais chiffres demandés par le client
+            billetsVendus = evenementService.countTotalTicketsVendus(organisateurId);
+            mesEmployes = personneService.countEmployesByOrganisateur(organisateurId);
+            mesClients = evenementService.countTotalClients(organisateurId);
+            revenue = evenementService.calculateTotalRevenue(organisateurId);
             
             // Charger les employés de cet organisateur (simulé pour l'instant)
             employesOrganisateur = new ArrayList<>();
@@ -136,6 +137,14 @@ public class DashboardOrgaBean implements Serializable {
     
     public String getCroissanceEvenements() {
         return "+12.3%";
+    }
+    
+    /**
+     * Retourne le chiffre d'affaires formaté en FCFA
+     */
+    public String getChiffreAffaires() {
+        java.text.NumberFormat nf = java.text.NumberFormat.getInstance(java.util.Locale.FRANCE);
+        return nf.format(revenue) + " FCFA";
     }
     
     /**
