@@ -17,100 +17,118 @@
 
     <ui:define name="content">
         <style>
-            .premium-card {
-                background: #ffffff;
-                border: none;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-                padding: 2rem;
-            }
-            .header-banner {
-                background: linear-gradient(135deg, #0047FF 0%, #002db3 100%);
-                border-radius: 12px;
-                padding: 2rem;
+            /* Premium Events Management Styles */
+            .event-page-header {
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                padding: 50px 40px;
+                border-radius: 24px;
                 color: white;
-                margin-bottom: 2rem;
+                margin-bottom: 40px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                box-shadow: 0 10px 30px rgba(0, 71, 255, 0.2);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                position: relative;
+                overflow: hidden;
             }
-            .header-banner h2 {
-                font-weight: 700;
-                margin: 0 0 0.5rem 0;
+            
+            .event-page-header::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -10%;
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(circle, rgba(0, 71, 255, 0.2) 0%, transparent 70%);
+                border-radius: 50%;
             }
-            .header-banner p {
+            
+            .event-page-title h2 {
+                font-size: 32px;
+                font-weight: 800;
+                letter-spacing: -1px;
+                margin: 0 0 10px 0;
+                position: relative;
+                z-index: 2;
+            }
+            
+            .event-page-title p {
+                font-size: 16px;
+                color: #94a3b8;
                 margin: 0;
-                opacity: 0.8;
-                font-size: 1rem;
+                position: relative;
+                z-index: 2;
             }
+            
             .btn-create-premium {
-                background-color: #ffffff;
-                color: #0047FF;
-                border: none;
-                border-radius: 50px;
-                padding: 10px 25px;
-                font-weight: 600;
-                text-decoration: none;
-                transition: transform 0.2s, box-shadow 0.2s;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
+                background: white !important;
+                color: #0f172a !important;
+                border: none !important;
+                padding: 14px 28px !important;
+                border-radius: 14px !important;
+                font-weight: 700 !important;
+                font-size: 15px !important;
+                transition: all 0.3s ease !important;
+                position: relative;
+                z-index: 2;
             }
+            
             .btn-create-premium:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(255,255,255,0.2) !important;
             }
-            .custom-datatable .ui-datatable-header, .custom-datatable .ui-paginator {
-                background: transparent;
-                border: none;
+            
+            .data-card {
+                background: white;
+                border-radius: 24px;
+                padding: 30px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+                border: 1px solid #f1f5f9;
             }
-            .custom-datatable th {
-                background-color: #f8fbff !important;
-                color: #333 !important;
-                font-weight: 600 !important;
-                text-transform: uppercase;
-                font-size: 0.85rem;
-                letter-spacing: 0.5px;
-                border-top: none !important;
-                border-right: none !important;
-                border-left: none !important;
-                border-bottom: 2px solid #eef2f6 !important;
-                padding: 1rem !important;
+            
+            .premium-table .ui-datatable-thead > tr > th {
+                background: #f8fafc !important;
+                color: #64748b !important;
+                font-weight: 700 !important;
+                font-size: 12px !important;
+                text-transform: uppercase !important;
+                letter-spacing: 1px !important;
+                padding: 20px 25px !important;
+                border: none !important;
             }
-            .custom-datatable td {
-                border-right: none !important;
-                border-left: none !important;
+            
+            .premium-table .ui-datatable-data > tr > td {
+                padding: 25px !important;
+                border: none !important;
                 border-bottom: 1px solid #f1f5f9 !important;
-                padding: 1rem !important;
-                vertical-align: middle;
+                font-size: 15px !important;
+                vertical-align: middle !important;
             }
-            .custom-datatable tr:hover {
-                background-color: #fcfdfe !important;
-            }
-            .event-title {
+            
+            .event-main-title {
                 font-weight: 700;
-                color: #1a1a1a;
-                font-size: 1.05rem;
-                margin-bottom: 0.2rem;
+                color: #0f172a;
+                font-size: 16px;
+                margin-bottom: 4px;
             }
-            .event-subtitle {
-                font-size: 0.85rem;
-                color: #6c757d;
+            
+            .event-location {
+                font-size: 13px;
+                color: #64748b;
                 display: flex;
                 align-items: center;
-                gap: 5px;
+                gap: 6px;
             }
-            .badge-custom {
-                padding: 6px 12px;
-                border-radius: 30px;
-                font-size: 0.75rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+            
+            .status-badge {
+                padding: 6px 14px !important;
+                border-radius: 10px !important;
+                font-size: 12px !important;
+                font-weight: 700 !important;
             }
-            .badge-actif { background-color: #e6f4ea; color: #1e8e3e; }
-            .badge-brouillon { background-color: #fef0f0; color: #d93025; }
+            
+            .status-published { background: #f0fdf4 !important; color: #16a34a !important; }
+            .status-draft { background: #fee2e2 !important; color: #ef4444 !important; }
         </style>
 
         <h:form id="formEvenements">
@@ -118,66 +136,65 @@
             
             <div class="row">
                 <div class="col-12">
-                    <!-- Banner -->
-                    <div class="header-banner">
-                        <div>
+                    <!-- Premium Header -->
+                    <div class="event-page-header">
+                        <div class="event-page-title">
                             <h2>Gérez vos Événements</h2>
-                            <p>Suivez, modifiez ou ajoutez de nouveaux événements en un clic.</p>
+                            <p>Consultez la liste complète de vos événements et suivez leur succès.</p>
                         </div>
-                        <div>
-                            <p:button outcome="orga_creer_evenement" value="Nouvel Événement" icon="pi pi-plus" styleClass="btn-create-premium" />
-                        </div>
+                        <p:button outcome="orga_creer_evenement" value="Nouvel Événement" icon="pi pi-plus" styleClass="btn-create-premium" />
                     </div>
 
-                    <!-- Table Card -->
-                    <div class="premium-card">
+                    <!-- Premium Data Card -->
+                    <div class="data-card">
                         <p:dataTable id="dt-evenements" widgetVar="dtEvenements" var="evenement" value="#{orgaEvenementController.mesEvenements}"
-                                     reflow="true" styleClass="custom-datatable"
-                                     paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom"
-                                     emptyMessage="Aucun événement trouvé."
-                                     globalFilterFunction="#{evenement.titre}">
+                                     reflow="true" styleClass="premium-table"
+                                     paginator="true" rows="10" paginatorPosition="bottom"
+                                     emptyMessage="Aucun événement trouvé.">
 
-                            <p:column headerText="Événement" sortBy="#{evenement.titre}" filterBy="#{evenement.titre}">
-                                <div class="event-title">#{evenement.titre}</div>
-                                <div class="event-subtitle"><i class="pi pi-map-marker"></i> #{evenement.lieu}</div>
+                            <p:column headerText="Événement" style="width: 35%;">
+                                <div class="event-main-title">#{evenement.titre}</div>
+                                <div class="event-location">
+                                    <i class="pi pi-map-marker"></i> #{evenement.lieu}
+                                </div>
                             </p:column>
                             
-                            <p:column headerText="Date et Heure" sortBy="#{evenement.dateEvenement}">
-                                <div style="font-weight: 500; color: #333;">
+                            <p:column headerText="Date" style="width: 20%;">
+                                <div style="font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                                    <i class="pi pi-calendar" style="color: #3b82f6;"></i>
                                     <h:outputText value="#{evenement.dateEvenement}">
                                         <f:convertDateTime pattern="dd MMM yyyy" locale="fr"/>
                                     </h:outputText>
                                 </div>
-                                <div style="font-size: 0.85rem; color: #6c757d;">
-                                    <i class="pi pi-clock"></i> 
+                                <div style="font-size: 13px; color: #64748b; margin-top: 4px; padding-left: 22px;">
                                     <h:outputText value="#{evenement.dateEvenement}">
                                         <f:convertDateTime pattern="HH:mm" />
                                     </h:outputText>
                                 </div>
                             </p:column>
 
-                            <p:column headerText="Offre de Billets">
-                                <span style="font-weight: 600; color: #0047FF;">#{evenement.categoriesBillets.size()}</span> catégories créées
-                                <br/>
-                                <h:outputText value="#{evenement.categoriesBillets.stream().map(c -> c.nom).toList().toString().replace('[','').replace(']','')}" style="font-size: 0.8rem; color: #6c757d;"/>
+                            <p:column headerText="Billetterie" style="width: 20%;">
+                                <span style="font-weight: 700; color: #3b82f6;">#{evenement.categoriesBillets.size()}</span> catégories
+                                <div style="font-size: 12px; color: #94a3b8; font-weight: 500; margin-top: 4px;">
+                                    #{evenement.categoriesBillets.stream().map(c -> c.nom).limit(2).toList().toString().replace('[','').replace(']','')}...
+                                </div>
                             </p:column>
 
-                            <p:column headerText="Statut" style="width: 15%;">
-                                <h:panelGroup rendered="#{evenement.statut == 'Publié'}">
-                                    <span class="badge-custom badge-actif"><i class="pi pi-check-circle" style="font-size:0.7rem;"></i> Publié</span>
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{evenement.statut != 'Publié'}">
-                                    <span class="badge-custom badge-brouillon"><i class="pi pi-exclamation-circle" style="font-size:0.7rem;"></i> #{evenement.statut}</span>
-                                </h:panelGroup>
+                            <p:column headerText="Statut" style="width: 15%; text-align: center;">
+                                <p:tag 
+                                    value="#{evenement.statut == 'Publié' ? 'EN LIGNE' : evenement.statut}" 
+                                    styleClass="status-badge #{evenement.statut == 'Publié' ? 'status-published' : 'status-draft'}"/>
                             </p:column>
 
-                            <p:column exportable="false" ariaHeaderText="Actions" style="text-align: right; width: 15%;">
-                                <p:commandButton icon="pi pi-pencil" 
-                                                 styleClass="ui-button-outlined ui-button-secondary rounded-button mr-2" 
-                                                 title="Modifier l'événement (Bientôt disponible)"/>
-                                <p:commandButton icon="pi pi-trash" 
-                                                 styleClass="ui-button-outlined ui-button-danger rounded-button" 
-                                                 title="Supprimer (Bientôt disponible)"/>
+                            <p:column headerText="Actions" style="width: 10%; text-align: center;">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <p:commandButton icon="pi pi-pencil" 
+                                                     styleClass="ui-button-flat rounded-circle" 
+                                                     title="Modifier"/>
+                                    <p:commandButton icon="pi pi-trash" 
+                                                     styleClass="ui-button-flat ui-button-danger rounded-circle" 
+                                                     title="Supprimer"/>
+                                </div>
                             </p:column>
 
                         </p:dataTable>

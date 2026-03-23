@@ -17,69 +17,91 @@
 
     <ui:define name="content">
         <style>
-            .premium-card {
-                background: #ffffff;
-                border: none;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-                padding: 2.5rem;
-                margin-bottom: 2rem;
+            /* Premium Event Creation Styles */
+            .creation-card {
+                background: white;
+                border-radius: 24px;
+                padding: 40px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+                border: 1px solid #f1f5f9;
             }
-            .section-title {
-                font-size: 1.25rem;
-                font-weight: 700;
-                color: #1a1a1a;
-                margin-bottom: 0.5rem;
+            
+            .section-header {
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 15px;
+                margin-bottom: 25px;
             }
-            .section-subtitle {
-                font-size: 0.9rem;
-                color: #6c757d;
-                margin-bottom: 2rem;
+            
+            .section-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+                background: #f8fafc;
+                color: #3b82f6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
             }
-            /* Custom Inputs */
-            body .ui-inputfield {
-                padding: 0.75rem 1rem;
-                border-radius: 8px;
-                background-color: #f8fbff;
-                border: 1px solid #ced4da;
-                transition: border-color 0.2s, box-shadow 0.2s;
+            
+            .section-title {
+                font-size: 22px;
+                font-weight: 800;
+                color: #0f172a;
+                margin: 0;
+                letter-spacing: -0.5px;
             }
-            body .ui-inputfield:focus {
-                border-color: #0047FF;
-                box-shadow: 0 0 0 0.2rem rgba(0, 71, 255, 0.25);
-            }
-            /* Category Table styling */
-            .cat-table-header {
-                font-weight: 700 !important;
-                background: #f8fbff !important;
-                color: #333 !important;
-                border: none !important;
-                text-transform: uppercase;
-                font-size: 0.8rem;
-                letter-spacing: 1px;
-            }
-            .btn-action-primary {
-                background: #0047FF !important;
-                border-color: #0047FF !important;
-                padding: 0.75rem 2rem !important;
-                font-weight: 600 !important;
-                border-radius: 50px !important;
-                letter-spacing: 0.5px !important;
-                box-shadow: 0 4px 15px rgba(0,71,255,0.3) !important;
-            }
-            .btn-action-primary:hover {
-                background: #0039CC !important;
-                border-color: #0039CC !important;
-                transform: translateY(-2px);
-            }
-            .input-label {
-                font-weight: 600;
-                color: #333;
-                margin-bottom: 0.5rem;
+            
+            .form-label {
                 display: block;
+                font-weight: 700;
+                color: #0f172a;
+                margin-bottom: 10px;
+                font-size: 14px;
+            }
+            
+            .ui-inputfield {
+                width: 100% !important;
+                padding: 14px 18px !important;
+                background: #f8fafc !important;
+                border: 2px solid transparent !important;
+                border-radius: 14px !important;
+                font-size: 15px !important;
+                font-weight: 500 !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .ui-inputfield:focus {
+                background: white !important;
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+            }
+            
+            .btn-premium-launch {
+                background: linear-gradient(135deg, #0047FF 0%, #0039CC 100%) !important;
+                border: none !important;
+                color: white !important;
+                padding: 16px 40px !important;
+                border-radius: 16px !important;
+                font-weight: 800 !important;
+                font-size: 16px !important;
+                letter-spacing: 0.5px !important;
+                box-shadow: 0 10px 25px rgba(0, 71, 255, 0.2) !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .btn-premium-launch:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 35px rgba(0, 71, 255, 0.3) !important;
+            }
+            
+            .category-builder {
+                background: #f8fafc;
+                border-radius: 20px;
+                padding: 30px;
+                border: 1px dashed #cbd5e1;
             }
         </style>
 
@@ -87,97 +109,102 @@
             <p:growl id="messages" showDetail="true" />
 
             <div class="row">
-                <!-- Colonne Gauche: Infos Générales -->
-                <div class="col-12 col-xl-7">
-                    <div class="premium-card">
-                        <div class="section-title">
-                            <i class="pi pi-align-left text-primary"></i> Détails de l'Événement
+                <!-- Main Info Column -->
+                <div class="col-lg-7">
+                    <div class="creation-card">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="pi pi-file-edit"></i>
+                            </div>
+                            <h3 class="section-title">Détails de l'Événement</h3>
                         </div>
-                        <p class="section-subtitle">Renseignez les informations essentielles pour attirer votre public.</p>
                         
-                        <div class="ui-fluid formgrid grid">
-                            <div class="field col-12 mb-4">
-                                <h:outputLabel for="titre" value="Nom de l'événement" styleClass="input-label"/>
-                                <p:inputText id="titre" value="#{orgaEvenementController.nouvelEvenement.titre}" required="true" requiredMessage="Le titre est requis." placeholder="Ex: Concert Symphonique d'Hiver"/>
+                        <div class="ui-fluid">
+                            <div class="form-group mb-4">
+                                <h:outputLabel for="titre" value="Nom de l'événement" styleClass="form-label"/>
+                                <p:inputText id="titre" value="#{orgaEvenementController.nouvelEvenement.titre}" required="true" placeholder="Ex: Festival des Lumières 2026"/>
                             </div>
                             
-                            <div class="field col-12 mb-4">
-                                <h:outputLabel for="description" value="Description accrocheuse" styleClass="input-label"/>
-                                <p:inputTextarea id="description" value="#{orgaEvenementController.nouvelEvenement.description}" rows="5" placeholder="Parlez de votre événement pour donner envie..."/>
+                            <div class="form-group mb-4">
+                                <h:outputLabel for="description" value="Description" styleClass="form-label"/>
+                                <p:inputTextarea id="description" value="#{orgaEvenementController.nouvelEvenement.description}" rows="6" placeholder="Décrivez l'expérience unique que vous proposez..."/>
                             </div>
 
-                            <div class="field col-12 md:col-6 mb-4">
-                                <h:outputLabel for="lieu" value="Adresse ou Lieu" styleClass="input-label"/>
-                                <div class="ui-inputgroup">
-                                    <span class="ui-inputgroup-addon" style="background:#f8fbff; border-radius:8px 0 0 8px;"><i class="pi pi-map-marker"></i></span>
-                                    <p:inputText id="lieu" value="#{orgaEvenementController.nouvelEvenement.lieu}" required="true" requiredMessage="Le lieu est requis." placeholder="Palais des Congrès" style="border-radius:0 8px 8px 0;"/>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <h:outputLabel for="lieu" value="Lieu / Adresse" styleClass="form-label"/>
+                                        <p:inputText id="lieu" value="#{orgaEvenementController.nouvelEvenement.lieu}" required="true" placeholder="Ville, Salle ou Adresse"/>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="field col-12 md:col-6 mb-4">
-                                <h:outputLabel for="dateEvent" value="Date et Heure du lancement" styleClass="input-label"/>
-                                <div class="ui-inputgroup">
-                                    <span class="ui-inputgroup-addon" style="background:#f8fbff; border-radius:8px 0 0 8px;"><i class="pi pi-calendar"></i></span>
-                                    <p:datePicker id="dateEvent" value="#{orgaEvenementController.nouvelEvenement.dateEvenement}" showTime="true" required="true" requiredMessage="La date est requise." style="border-radius:0 8px 8px 0;"/>
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <h:outputLabel for="dateEvent" value="Date et Heure" styleClass="form-label"/>
+                                        <p:datePicker id="dateEvent" value="#{orgaEvenementController.nouvelEvenement.dateEvenement}" showTime="true" required="true"/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Colonne Droite: Billetterie -->
-                <div class="col-12 col-xl-5">
-                    <div class="premium-card">
-                        <div class="section-title">
-                            <i class="pi pi-ticket text-success"></i> Configuration Billetterie
+                <!-- Ticketing Column -->
+                <div class="col-lg-5">
+                    <div class="creation-card">
+                        <div class="section-header">
+                            <div class="section-icon" style="color: #a855f7;">
+                                <i class="pi pi-ticket"></i>
+                            </div>
+                            <h3 class="section-title">Billetterie</h3>
                         </div>
-                        <p class="section-subtitle">Créez les différentes offres (VIP, Standard...) pour cet événement.</p>
                         
-                        <div class="ui-fluid formgrid grid mb-4" style="background: #f8fbff; padding: 1.5rem; border-radius: 8px; border: 1px dashed #ced4da;">
-                            <div class="field col-12 mb-3">
-                                <h:outputLabel for="catNom" value="Type de billet" styleClass="input-label" style="font-size:0.85rem;"/>
-                                <p:inputText id="catNom" value="#{orgaEvenementController.nouvelleCategorie.nom}" placeholder="Pass Premium, Standard..." />
-                            </div>
-                            <div class="field col-6 mb-3">
-                                <h:outputLabel for="catPrix" value="Prix unitaire" styleClass="input-label" style="font-size:0.85rem;"/>
-                                <p:inputNumber id="catPrix" value="#{orgaEvenementController.nouvelleCategorie.prix}" symbol=" FCFA" symbolPosition="s" decimalSeparator="," thousandSeparator="." placeholder="0" />
-                            </div>
-                            <div class="field col-6 mb-3">
-                                <h:outputLabel for="catQte" value="Stock" styleClass="input-label" style="font-size:0.85rem;"/>
-                                <p:spinner id="catQte" value="#{orgaEvenementController.nouvelleCategorie.quantiteTotale}" min="1" />
-                            </div>
-                            <div class="field col-12 mb-0">
-                                <p:commandButton value="Ajouter cette offre" action="#{orgaEvenementController.ajouterCategorie}" 
-                                                 update="@form" styleClass="ui-button-success" icon="pi pi-plus" style="width: 100%; border-radius: 8px;" />
+                        <div class="category-builder mb-4">
+                            <div class="ui-fluid">
+                                <div class="form-group mb-3">
+                                    <h:outputLabel value="Type de billet" styleClass="form-label"/>
+                                    <p:inputText value="#{orgaEvenementController.nouvelleCategorie.nom}" placeholder="Ex: PASS VIP, EARLY BIRD..."/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <div class="form-group">
+                                            <h:outputLabel value="Prix (FCFA)" styleClass="form-label"/>
+                                            <p:inputNumber value="#{orgaEvenementController.nouvelleCategorie.prix}" symbol="" decimalSeparator="," thousandSeparator="." />
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <div class="form-group">
+                                            <h:outputLabel value="Stock" styleClass="form-label"/>
+                                            <p:spinner value="#{orgaEvenementController.nouvelleCategorie.quantiteTotale}" min="1" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <p:commandButton value="Ajouter l'offre" action="#{orgaEvenementController.ajouterCategorie}" 
+                                                 update="@form" icon="pi pi-plus" styleClass="ui-button-primary rounded-pill mt-2" />
                             </div>
                         </div>
 
-                        <!-- Liste des catégories ajoutées -->
+                        <!-- Current Categories -->
                         <p:dataTable id="dt-categories" var="categorie" value="#{orgaEvenementController.nouvelEvenement.categoriesBillets}" 
-                                     emptyMessage="Aucune tarification configurée." styleClass="mb-4">
-                            <p:column headerText="Type" styleClass="cat-table-header">
-                                <h:outputText value="#{categorie.nom}" style="font-weight: 600;" />
+                                     emptyMessage="Aucun billet configuré." styleClass="mb-4">
+                            <p:column headerText="Billet">
+                                <span style="font-weight: 700; color: #0f172a;">#{categorie.nom}</span>
                             </p:column>
-                            <p:column headerText="Prix" styleClass="cat-table-header">
-                                <h:outputText value="#{categorie.prix}">
-                                    <f:convertNumber type="currency" currencySymbol="F" maxFractionDigits="0"/>
+                            <p:column headerText="Prix" style="text-align: right;">
+                                <h:outputText value="#{categorie.prix}" style="font-weight: 700; color: #3b82f6;">
+                                    <f:convertNumber pattern="#,##0" />
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Qte" style="width: 4rem; text-align: center;" styleClass="cat-table-header">
-                                <h:outputText value="#{categorie.quantiteTotale}" />
-                            </p:column>
-                            <p:column style="width: 3rem; text-align: center;">
-                                <p:commandButton icon="pi pi-times" styleClass="ui-button-danger ui-button-flat rounded-button" 
-                                                 action="#{orgaEvenementController.supprimerCategorie(categorie)}" update="@form" />
+                            <p:column style="width: 50px; text-align: center;">
+                                <p:commandButton icon="pi pi-times" action="#{orgaEvenementController.supprimerCategorie(categorie)}" 
+                                                 update="@form" styleClass="ui-button-flat ui-button-danger rounded-circle" />
                             </p:column>
                         </p:dataTable>
-                    </div>
 
-                    <!-- Actions Boutons -->
-                    <div class="d-flex justify-content-end align-items-center gap-3 mt-4">
-                        <p:button outcome="orga_evenements" value="Annuler" styleClass="ui-button-flat ui-button-secondary" style="font-weight: 600;" />
-                        <p:commandButton value="Lancer l'Événement" action="#{orgaEvenementController.sauvegarderEvenement}" 
-                                         styleClass="btn-action-primary" icon="pi pi-rocket" update="messages formCreerEvenement" />
+                        <div class="d-flex flex-column gap-3 mt-5">
+                            <p:commandButton value="Lancer l'Événement" action="#{orgaEvenementController.sauvegarderEvenement}" 
+                                             styleClass="btn-premium-launch" icon="pi pi-rocket" update="messages formCreerEvenement" />
+                            <p:button outcome="orga_evenements" value="Annuler les modifications" styleClass="ui-button-flat ui-button-secondary" />
+                        </div>
                     </div>
                 </div>
             </div>
