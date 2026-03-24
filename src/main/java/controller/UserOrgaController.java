@@ -78,12 +78,8 @@ public class UserOrgaController implements Serializable {
             
             mesUtilisateurs = new ArrayList<>();
             
-            // TODO: Implémenter les vraies requêtes
-            // mesUtilisateurs.addAll(personneService.findEmployesByOrganisateur(organisateurId));
-            // mesUtilisateurs.addAll(personneService.findClientsByOrganisateur(organisateurId));
-            
-            // Pour l'instant, simulation avec quelques utilisateurs
-            simulerUtilisateurs();
+            mesUtilisateurs.addAll(personneService.findEmployesByOrganisateur(organisateurId));
+            mesUtilisateurs.addAll(personneService.findClientsByOrganisateur(organisateurId));
             
             System.out.println("=== MES UTILISATEURS CHARGÉS ===");
             System.out.println("Organisateur ID: " + organisateurId);
@@ -96,37 +92,15 @@ public class UserOrgaController implements Serializable {
         }
     }
     
-    /**
-     * Simulation temporaire des utilisateurs
-     */
-    private void simulerUtilisateurs() {
-        // Simulation d'employés
-        Employe emp1 = new Employe();
-        emp1.setId(101L);
-        emp1.setNom("Dupont");
-        emp1.setPrenom("Pierre");
-        emp1.setEmail("pierre.dupont@event.com");
-        emp1.setRole(Role.EMPLOYE);
-        emp1.setDateInscription(new java.util.Date());
-        mesUtilisateurs.add(emp1);
-        
-        // Simulation de clients
-        Client client1 = new Client();
-        client1.setId(102L);
-        client1.setNom("Martin");
-        client1.setPrenom("Sophie");
-        client1.setEmail("sophie.martin@client.com");
-        client1.setRole(Role.CLIENT);
-        client1.setDateInscription(new java.util.Date());
-        mesUtilisateurs.add(client1);
-    }
+
     
     /**
      * Prépare l'ajout d'un nouvel utilisateur
      */
     public void preparerAjout() {
-        nouvelUtilisateur = new Client(); // Par défaut, on crée un Client
-        roleSelectionne = "CLIENT";
+        nouvelUtilisateur = new Employe(); // Par défaut, un employé
+        nouvelUtilisateur.setRole(Role.EMPLOYE); // FIX: Définir le rôle explicitement
+        roleSelectionne = "EMPLOYE";
         modeEdition = false;
         
         System.out.println("=== PRÉPARATION AJOUT ===");
@@ -272,9 +246,27 @@ public class UserOrgaController implements Serializable {
             org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Succès', 'L\\'utilisateur a été ajouté avec succès.', 'success');");
             
         } catch (Exception e) {
-            System.err.println("Erreur lors de l'ajout de l'utilisateur: " + e.getMessage());
+            System.err.println(">>> ERREUR lors de l'ajout de l'utilisateur: " + e.getMessage());
             e.printStackTrace();
-            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur système', 'Une erreur inattendue s\\'est produite.', 'error');");
+            
+            String detail = e.getMessage();
+            // Analyse spécifique pour Bean Validation
+            Throwable t = e;
+            while (t != null) {
+                if (t instanceof jakarta.validation.ConstraintViolationException) {
+                    jakarta.validation.ConstraintViolationException cve = (jakarta.validation.ConstraintViolationException) t;
+                    StringBuilder sb = new StringBuilder("Erreur de validation : ");
+                    for (jakarta.validation.ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+                        sb.append(cv.getPropertyPath()).append(" ").append(cv.getMessage()).append("; ");
+                    }
+                    detail = sb.toString();
+                    System.err.println(">>> DÉTAILS VALIDATION: " + detail);
+                    break;
+                }
+                t = t.getCause();
+            }
+            
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur', '" + detail.replace("'", "\\'") + "', 'error');");
         }
     }
     

@@ -395,62 +395,74 @@
             </div>
         </section>
         
-        <!-- Section des événements -->
         <section class="main-content" style="padding-top: 4rem;">
             <div class="container">
                 <div class="text-center">
-                    <h2 class="section-title">À la Une cette semaine</h2>
+                    <h2 class="section-title">#{indexController.filtreMes ? 'Mes événements en ligne' : 'Événements en ligne'}</h2>
+                    <h:form id="homeFilterForm" style="margin-bottom: 2rem;">
+                        <p:commandButton
+                            value="Tous les événements"
+                            action="#{indexController.afficherTousLesEvenements()}"
+                            process="@this"
+                            update=":eventsPanel :homeFilterForm"
+                            styleClass="btn-event"
+                            disabled="#{indexController.filtreTous}" />
+                        <p:commandButton
+                            value="Mes événements"
+                            action="#{indexController.afficherMesEvenements()}"
+                            process="@this"
+                            update=":eventsPanel :homeFilterForm"
+                            styleClass="btn-event"
+                            style="margin-left: .75rem;"
+                            rendered="#{indexController.organisateurConnecte}"
+                            disabled="#{indexController.filtreMes}" />
+                    </h:form>
                 </div>
-                
-                <!-- Grille d'événements -->
-                <div class="row g-5">
-                    <ui:repeat value="#{indexController.evenements}" var="event">
-                        <div class="col-lg-4 col-md-6 col-sm-12">
-                            <div class="card event-card">
-                                <!-- Image et Badges -->
-                                <div class="event-image">
-                                    <div class="event-date-badge">
-                                        <h:outputText value="#{event.date}" escape="false"/>
+                <h:panelGroup id="eventsPanel" layout="block">
+                    <div class="row g-5">
+                        <ui:repeat value="#{indexController.evenements}" var="event">
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="card event-card">
+                                    <div class="event-image">
+                                        <div class="event-date-badge">
+                                            <h:outputText value="#{event.date}" escape="false"/>
+                                        </div>
+                                        <i class="#{event.icone}"></i>
+                                        <div class="event-price-tag">#{event.prix == 'Gratuit' ? 'Entrée Libre' : event.prix}</div>
+                                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(255,51,102,0.8) 0%, rgba(255,153,51,0.8) 100%); mix-blend-mode: overlay;"></div>
                                     </div>
-                                    <i class="#{event.icone}"></i>
-                                    <div class="event-price-tag">#{event.prix == 'Gratuit' ? 'Entrée Libre' : event.prix}</div>
-                                    
-                                    <!-- Dynamic overlay gradient to make it look distinct -->
-                                    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(255,51,102,0.8) 0%, rgba(255,153,51,0.8) 100%); mix-blend-mode: overlay;"></div>
-                                </div>
-                                
-                                <!-- Corps de la carte -->
-                                <div class="event-body">
-                                    <h5 class="event-title">#{event.titre}</h5>
-                                    
-                                    <div class="event-location">
-                                        <i class="pi pi-map-marker"></i>
-                                        <span>#{event.lieu}</span>
-                                    </div>
-                                    
-                                    <p class="event-description">#{event.description}</p>
-                                    
-                                    <div class="mt-auto">
-                                        <h:form>
-                                            <p:commandButton 
-                                                value="Réserver ma place"
-                                                styleClass="btn-event"
-                                                icon="pi pi-bookmark"
-                                                iconPos="right"
-                                                oncomplete="PF('purchaseDialog').show()"
-                                                update=":purchaseDialogForm"
-                                                process="@this">
-                                                <f:setPropertyActionListener value="#{event}" target="#{indexController.selectedEvent}" />
-                                            </p:commandButton>
-                                        </h:form>
+                                    <div class="event-body">
+                                        <h5 class="event-title">#{event.titre}</h5>
+                                        <div class="event-location">
+                                            <i class="pi pi-map-marker"></i>
+                                            <span>#{event.lieu}</span>
+                                        </div>
+                                        <p class="event-description">#{event.description}</p>
+                                        <div class="mt-auto">
+                                            <h:form>
+                                                <p:commandButton
+                                                    value="Réserver ma place"
+                                                    styleClass="btn-event"
+                                                    icon="pi pi-bookmark"
+                                                    iconPos="right"
+                                                    oncomplete="PF('purchaseDialog').show()"
+                                                    update=":purchaseDialogForm"
+                                                    process="@this">
+                                                    <f:setPropertyActionListener value="#{event}" target="#{indexController.selectedEvent}" />
+                                                </p:commandButton>
+                                            </h:form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </ui:repeat>
+                    </div>
+                    <ui:fragment rendered="#{empty indexController.evenements}">
+                        <div class="text-center" style="padding: 2rem 0 3rem 0; color: #64748b; font-weight: 600;">
+                            Aucun événement publié pour le moment.
                         </div>
-                    </ui:repeat>
-                </div>
-                
-                <!-- Section d'appel à l'action Premium -->
+                    </ui:fragment>
+                </h:panelGroup>
                 <div class="cta-section">
                     <div class="row align-items-center">
                         <div class="col-lg-8 text-lg-start text-center">
@@ -471,16 +483,13 @@
                 </div>
             </div>
         </section>
-
-        <!-- Purchase Dialog -->
-        <p:dialog id="purchaseDialog" widgetVar="purchaseDialog" modal="true" responsive="true" 
-                  header="Réserver votre place" showEffect="fade" hideEffect="fade" 
-                  styleClass="premium-dialog" width="500">
+        
+        <p:dialog id="purchaseDialog" widgetVar="purchaseDialog" modal="true" responsive="true"
+                  header="Réserver votre place" showEffect="fade" hideEffect="fade" width="500">
             <h:form id="purchaseDialogForm">
                 <div class="p-4">
                     <h3 class="font-bold text-xl mb-4">#{indexController.selectedEvent.titre}</h3>
                     <p class="text-gray-600 mb-6">Choisissez votre catégorie de billet :</p>
-                    
                     <ui:repeat value="#{indexController.selectedEvent.realEvenement.categoriesBillets}" var="cat">
                         <div class="flex items-center justify-between p-4 mb-3 border rounded-xl hover:bg-slate-50 transition-colors">
                             <div style="flex: 1;">
@@ -493,7 +502,7 @@
                                         <f:convertNumber type="currency" currencySymbol="€" />
                                     </h:outputText>
                                 </div>
-                                <p:commandButton value="Acheter" 
+                                <p:commandButton value="Acheter"
                                                  action="#{billetController.acheterBillet(cat)}"
                                                  disabled="#{cat.quantiteDisponible le 0}"
                                                  styleClass="ui-button-raised ui-button-help"
@@ -504,20 +513,5 @@
                 </div>
             </h:form>
         </p:dialog>
-        
-        <style>
-            .premium-dialog.ui-dialog {
-                border-radius: 24px !important;
-                overflow: hidden !important;
-                border: none !important;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-            }
-            .premium-dialog .ui-dialog-titlebar {
-                background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary)) !important;
-                color: white !important;
-                padding: 1.5rem !important;
-                font-weight: 800 !important;
-            }
-        </style>
     </ui:define>
 </ui:composition>

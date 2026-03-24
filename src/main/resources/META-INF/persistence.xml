@@ -7,10 +7,11 @@
         <jta-data-source>jdbc/jpa</jta-data-source> 
         
         <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
-            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <property name="eclipselink.logging.level" value="INFO"/>
             <property name="eclipselink.logging.parameters" value="true"/>
-<property name="eclipselink.logging.parameters" value="true"/>
         </properties>
     </persistence-unit>
     

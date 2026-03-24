@@ -355,16 +355,9 @@
                 </div>
                 
                 <div class="form-field">
-                    <label>Rôle *</label>
-                    <p:selectOneMenu 
-                        value="#{userOrgaController.roleSelectionne}"
-                        required="true"
-                        requiredMessage="Le rôle est obligatoire">
-                        <f:selectItem itemLabel="-- Choisir un rôle --" itemValue="" noSelectionOption="true"/>
-                        <f:selectItem itemLabel="Client" itemValue="CLIENT"/>
-                        <f:selectItem itemLabel="Employé" itemValue="EMPLOYE"/>
-                        <p:ajax listener="#{userOrgaController.onRoleChange()}" update=":addUserForm"/>
-                    </p:selectOneMenu>
+                    <label>Rôle</label>
+                    <p:inputText value="Employé" readonly="true" styleClass="ui-state-disabled" />
+                    <h:inputHidden value="#{userOrgaController.roleSelectionne}" />
                 </div>
                 
                 <div class="form-field">

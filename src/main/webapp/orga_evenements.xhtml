@@ -176,7 +176,7 @@
                             <p:column headerText="Billetterie" style="width: 20%;">
                                 <span style="font-weight: 700; color: #3b82f6;">#{evenement.categoriesBillets.size()}</span> catégories
                                 <div style="font-size: 12px; color: #94a3b8; font-weight: 500; margin-top: 4px;">
-                                    #{evenement.categoriesBillets.stream().map(c -> c.nom).limit(2).toList().toString().replace('[','').replace(']','')}...
+                                    #{orgaEvenementController.resumeBilletterie(evenement)}
                                 </div>
                             </p:column>
 
@@ -190,10 +190,19 @@
                                 <div class="d-flex justify-content-center gap-2">
                                     <p:commandButton icon="pi pi-pencil" 
                                                      styleClass="ui-button-flat rounded-circle" 
-                                                     title="Modifier"/>
+                                                     title="Modifier"
+                                                     process="@this"
+                                                     update=":formEvenements:editEventDialogContent"
+                                                     oncomplete="PF('editEventDialog').show()"
+                                                     action="#{orgaEvenementController.preparerModification(evenement)}"/>
                                     <p:commandButton icon="pi pi-trash" 
                                                      styleClass="ui-button-flat ui-button-danger rounded-circle" 
-                                                     title="Supprimer"/>
+                                                     title="Supprimer"
+                                                     process="@this"
+                                                     update="dt-evenements messages"
+                                                     action="#{orgaEvenementController.supprimerEvenement(evenement)}">
+                                        <p:confirm header="Confirmation" message="Supprimer cet événement ?" icon="pi pi-exclamation-triangle"/>
+                                    </p:commandButton>
                                 </div>
                             </p:column>
 
@@ -201,6 +210,57 @@
                     </div>
                 </div>
             </div>
+
+
+
+            <p:dialog id="editEventDialog" widgetVar="editEventDialog" modal="true" responsive="true" header="Modifier l'événement" width="650">
+                <h:panelGroup id="editEventDialogContent" layout="block">
+                    <div class="ui-fluid">
+                        <div class="form-group mb-3">
+                            <h:outputLabel for="editTitre" value="Nom de l'événement" styleClass="form-label"/>
+                            <p:inputText id="editTitre" value="#{orgaEvenementController.evenementEnEdition.titre}" required="true"/>
+                        </div>
+                        <div class="form-group mb-3">
+                            <h:outputLabel for="editDescription" value="Description" styleClass="form-label"/>
+                            <p:inputTextarea id="editDescription" value="#{orgaEvenementController.evenementEnEdition.description}" rows="5"/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h:outputLabel for="editLieu" value="Lieu" styleClass="form-label"/>
+                                <p:inputText id="editLieu" value="#{orgaEvenementController.evenementEnEdition.lieu}" required="true"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h:outputLabel for="editDate" value="Date et heure" styleClass="form-label"/>
+                                <p:datePicker id="editDate" value="#{orgaEvenementController.evenementEnEdition.dateEvenement}" showTime="true" required="true"/>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <h:outputLabel for="editStatut" value="Statut" styleClass="form-label"/>
+                            <p:selectOneMenu id="editStatut" value="#{orgaEvenementController.evenementEnEdition.statut}">
+                                <f:selectItem itemValue="Publié" itemLabel="Publié" />
+                                <f:selectItem itemValue="Brouillon" itemLabel="Brouillon" />
+                                <f:selectItem itemValue="Annulé" itemLabel="Annulé" />
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <p:commandButton value="Enregistrer" icon="pi pi-check"
+                                             action="#{orgaEvenementController.sauvegarderModification()}"
+                                             update="dt-evenements messages"
+                                             oncomplete="PF('editEventDialog').hide()"/>
+                            <p:commandButton value="Annuler" type="button" icon="pi pi-times"
+                                             styleClass="ui-button-secondary"
+                                             onclick="PF('editEventDialog').hide()"/>
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="confirmForm">
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-flat ui-button-secondary" icon="pi pi-times"/>
+                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes ui-button-danger" icon="pi pi-check"/>
+            </p:confirmDialog>
         </h:form>
     </ui:define>
 </ui:composition>

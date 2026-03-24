@@ -1,5 +1,7 @@
 package controller;
 
+import entities.Organisateur;
+import entities.Personne;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -7,6 +9,7 @@ import jakarta.inject.Named;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -23,13 +26,18 @@ public class IndexController implements Serializable {
     
     @Inject
     private service.EvenementService evenementService;
+    
+    @Inject
+    private AuthController authController;
 
     private List<Evenement> evenements;
     private Evenement selectedEvent;
     private String rechercheTexte;
+    private String filtreAccueil;
     
     @PostConstruct
     public void init() {
+        filtreAccueil = "TOUS";
         chargerEvenements();
     }
     
@@ -37,14 +45,33 @@ public class IndexController implements Serializable {
      * Charge la liste des événements de la base de données
      */
     private void chargerEvenements() {
-        List<entities.Evenement> realEvents = evenementService.getAllEvents();
+        Personne utilisateur = authController != null ? authController.getUtilisateurConnecte() : null;
+        boolean organisateurConnecte = utilisateur instanceof Organisateur;
+        boolean modeMesEvenements = "MES".equals(filtreAccueil) && organisateurConnecte;
+        List<entities.Evenement> realEvents;
+
+        if (modeMesEvenements) {
+            realEvents = evenementService.getEvenementsByOrganisateur(utilisateur.getId());
+            realEvents.removeIf(e -> !isPublicStatus(e.getStatut()));
+        } else {
+            realEvents = evenementService.getPublicEvents();
+            if (organisateurConnecte) {
+                Long organisateurId = utilisateur.getId();
+                realEvents.sort(
+                    Comparator
+                        .comparing((entities.Evenement e) -> !organisateurId.equals(e.getOrganisateur().getId()))
+                        .thenComparing(entities.Evenement::getDateEvenement, Comparator.nullsLast(Comparator.naturalOrder()))
+                );
+            }
+        }
+
         evenements = new ArrayList<>();
         
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd\nMMM", java.util.Locale.FRENCH);
         
         for (entities.Evenement e : realEvents) {
             String prixStr = calculatePriceRange(e);
-            String dateStr = sdf.format(e.getDateEvenement()).toUpperCase();
+            String dateStr = e.getDateEvenement() != null ? sdf.format(e.getDateEvenement()).toUpperCase() : "--\n---";
             String icone = determineIcon(e);
             
             evenements.add(new Evenement(
@@ -57,6 +84,44 @@ public class IndexController implements Serializable {
                 e
             ));
         }
+    }
+
+    public void afficherTousLesEvenements() {
+        filtreAccueil = "TOUS";
+        chargerEvenements();
+    }
+
+    public void afficherMesEvenements() {
+        if (isOrganisateurConnecte()) {
+            filtreAccueil = "MES";
+        } else {
+            filtreAccueil = "TOUS";
+        }
+        chargerEvenements();
+    }
+
+    public boolean isFiltreTous() {
+        return !"MES".equals(filtreAccueil);
+    }
+
+    public boolean isFiltreMes() {
+        return "MES".equals(filtreAccueil);
+    }
+
+    public boolean isOrganisateurConnecte() {
+        return authController != null && authController.getUtilisateurConnecte() instanceof Organisateur;
+    }
+
+    private boolean isPublicStatus(String statut) {
+        if (statut == null) {
+            return false;
+        }
+        String normalized = statut.trim().toLowerCase();
+        return !normalized.equals("brouillon")
+                && !normalized.equals("annulé")
+                && !normalized.equals("annule")
+                && !normalized.equals("draft")
+                && !normalized.equals("cancelled");
     }
 
     private String calculatePriceRange(entities.Evenement e) {

@@ -347,6 +347,12 @@
                                 rendered="#{authController.utilisateurConnecte.role == 'ORGANISATEUR'}"/>
                             
                             <p:menuitem 
+                                value="Mes Billets" 
+                                icon="pi pi-ticket" 
+                                outcome="orga_billets?faces-redirect=true"
+                                rendered="#{authController.utilisateurConnecte.role == 'ORGANISATEUR'}"/>
+                            
+                            <p:menuitem 
                                 value="Gérer mes Utilisateurs" 
                                 icon="pi pi-id-card"
                                 outcome="users_management_orga?faces-redirect=true"

@@ -201,10 +201,10 @@ public class PersonneService {
      * @return Liste des clients de cet organisateur
      */
     public List<Personne> findClientsByOrganisateur(Long organisateurId) {
-        // TODO: Implémenter la logique de liaison client-organisateur
-        // (via les événements ou une relation directe)
-        
-        // Pour l'instant, retourne une liste vide
-        return List.of();
+        TypedQuery<Personne> query = em.createQuery(
+            "SELECT DISTINCT b.client FROM Billet b WHERE b.categorieBillet.evenement.organisateur.id = :orgId", 
+            Personne.class);
+        query.setParameter("orgId", organisateurId);
+        return query.getResultList();
     }
 }

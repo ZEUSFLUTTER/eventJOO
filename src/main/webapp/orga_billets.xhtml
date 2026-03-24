@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Gestion des Billets - Organisateur</ui:define>
+
+    <ui:define name="pageIcon">
+        <i class="pi pi-ticket"></i>
+    </ui:define>
+
+    <ui:define name="pageTitle">Mes Billets Disponibles</ui:define>
+
+    <ui:define name="content">
+        <style>
+            .page-header {
+                background: white;
+                border-radius: 20px;
+                padding: 30px 40px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+                border: 1px solid #f1f5f9;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .data-card {
+                background: white;
+                border-radius: 24px;
+                overflow: hidden;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+                border: 1px solid #f1f5f9;
+                padding: 20px;
+            }
+            .premium-table .ui-datatable-thead > tr > th {
+                background: #f8fafc !important;
+                color: #64748b !important;
+                font-weight: 700 !important;
+                padding: 15px !important;
+            }
+            .btn-action-primary {
+                background: linear-gradient(135deg, #0047FF 0%, #0039CC 100%) !important;
+                border: none !important;
+                color: white !important;
+                border-radius: 12px !important;
+                font-weight: 700 !important;
+            }
+        </style>
+
+        <h:form id="billetForm">
+            <div class="page-header">
+                <div>
+                    <h2 style="font-weight: 800; color: #0f172a; margin: 0;">Gestion de la Billetterie</h2>
+                    <p style="color: #64748b; margin: 5px 0 0 0;">Gérez les prix et les stocks de vos billets par événement.</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <p:selectOneMenu value="#{orgaBilletController.evenementFiltreId}" style="width: 250px;">
+                        <f:selectItem itemLabel="Tous les événements" itemValue="0"/>
+                        <f:selectItems value="#{orgaBilletController.mesEvenements}" var="ev" itemLabel="#{ev.titre}" itemValue="#{ev.id}"/>
+                        <p:ajax listener="#{orgaBilletController.chargerDonnees}" update="dt-categories"/>
+                    </p:selectOneMenu>
+                    <p:commandButton value="Nouveau Billet" icon="pi pi-plus" styleClass="btn-action-primary" 
+                                     oncomplete="PF('addBilletDialog').show()" action="#{orgaBilletController.preparerNouvelleCategorie}" update=":addBilletForm"/>
+                </div>
+            </div>
+
+            <div class="data-card">
+                <p:dataTable id="dt-categories" var="cat" value="#{orgaBilletController.mesCategories}" 
+                             widgetVar="dtCategories" emptyMessage="Aucun billet trouvé." 
+                             paginator="true" rows="10" paginatorPosition="bottom" styleClass="premium-table">
+                    
+                    <p:column headerText="Événement" style="width: 25%;">
+                        <span style="font-weight: 600;">#{cat.evenement.titre}</span>
+                    </p:column>
+                    
+                    <p:column headerText="Type de Billet" style="width: 20%;">
+                        <span style="color: #0f172a; font-weight: 700;">#{cat.nom}</span>
+                    </p:column>
+                    
+                    <p:column headerText="Prix (FCFA)" style="width: 15%; text-align: right;">
+                        <h:outputText value="#{cat.prix}" style="color: #3b82f6; font-weight: 800;">
+                            <f:convertNumber pattern="#,##0" />
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Stock (Vendus/Total)" style="width: 25%; text-align: center;">
+                        <div class="d-flex flex-column align-items-center">
+                            <span style="font-weight: 600;">#{cat.quantiteTotale - cat.quantiteDisponible} / #{cat.quantiteTotale}</span>
+                            <p:progressBar value="#{(cat.quantiteTotale - cat.quantiteDisponible) * 100 / cat.quantiteTotale}" 
+                                           displayOnly="true" style="height: 6px; width: 100px; margin-top: 5px;"/>
+                        </div>
+                    </p:column>
+                    
+                    <p:column headerText="Actions" style="width: 15%; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" styleClass="ui-button-flat rounded-circle" 
+                                         action="#{orgaBilletController.preparerModification(cat)}" 
+                                         oncomplete="PF('editBilletDialog').show()" update=":editBilletForm"/>
+                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-flat ui-button-danger rounded-circle" 
+                                         action="#{orgaBilletController.supprimerCategorie(cat)}" update="dt-categories"/>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <!-- Dialog Modification -->
+        <p:dialog header="Modifier le Billet" widgetVar="editBilletDialog" modal="true" responsive="true" width="450">
+            <h:form id="editBilletForm">
+                <h:panelGroup rendered="#{orgaBilletController.categorieSelectionnee != null}">
+                    <div class="ui-fluid">
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 700;">#{orgaBilletController.categorieSelectionnee.nom}</label>
+                            <p style="font-size: 13px; color: #64748b;">Événement : #{orgaBilletController.categorieSelectionnee.evenement.titre}</p>
+                        </div>
+                        <div class="mb-4">
+                            <h:outputLabel value="Prix (FCFA)" styleClass="form-label"/>
+                            <p:inputNumber value="#{orgaBilletController.categorieSelectionnee.prix}" symbol="" decimalSeparator="," thousandSeparator="." />
+                        </div>
+                        <div class="mb-4">
+                            <h:outputLabel value="Quantité Totale" styleClass="form-label"/>
+                            <p:spinner value="#{orgaBilletController.categorieSelectionnee.quantiteTotale}" min="1" />
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <p:commandButton value="Annuler" onclick="PF('editBilletDialog').hide()" type="button" styleClass="ui-button-flat ui-button-secondary"/>
+                        <p:commandButton value="Enregistrer" action="#{orgaBilletController.enregistrerModification}" 
+                                         oncomplete="PF('editBilletDialog').hide()" update=":billetForm:dt-categories" styleClass="btn-action-primary"/>
+                    </div>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+        <!-- Dialog Ajout -->
+        <p:dialog header="Nouvelle Catégorie de Billet" widgetVar="addBilletDialog" modal="true" responsive="true" width="500">
+            <h:form id="addBilletForm">
+                <div class="ui-fluid">
+                    <div class="mb-4">
+                        <h:outputLabel value="Événement" styleClass="form-label"/>
+                        <p:selectOneMenu value="#{orgaBilletController.selectedEvenementId}" required="true">
+                            <f:selectItem itemLabel="Sélectionner un événement" itemValue=""/>
+                            <f:selectItems value="#{orgaBilletController.mesEvenements}" var="ev" itemLabel="#{ev.titre}" itemValue="#{ev.id}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="mb-4">
+                        <h:outputLabel value="Nom de l'offre (ex: VIP, Standard)" styleClass="form-label"/>
+                        <p:inputText value="#{orgaBilletController.nouvelleCategorie.nom}" required="true" placeholder="PASS GOLD..."/>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-4">
+                            <h:outputLabel value="Prix (FCFA)" styleClass="form-label"/>
+                            <p:inputNumber value="#{orgaBilletController.nouvelleCategorie.prix}" symbol="" required="true" />
+                        </div>
+                        <div class="col-6 mb-4">
+                            <h:outputLabel value="Stock initial" styleClass="form-label"/>
+                            <p:spinner value="#{orgaBilletController.nouvelleCategorie.quantiteTotale}" min="1" required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <p:commandButton value="Annuler" onclick="PF('addBilletDialog').hide()" type="button" styleClass="ui-button-flat ui-button-secondary"/>
+                    <p:commandButton value="Créer le Billet" action="#{orgaBilletController.ajouterCategorie}" 
+                                     oncomplete="if (!args.validationFailed) PF('addBilletDialog').hide()" update=":billetForm:dt-categories" styleClass="btn-action-primary"/>
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

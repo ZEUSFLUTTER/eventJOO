@@ -1,6 +1,5 @@
 package controller;
 
-import entities.CategorieBillet;
 import entities.Evenement;
 import entities.Organisateur;
 import entities.Personne;
@@ -25,6 +24,8 @@ import java.util.List;
 @Setter
 public class OrgaEvenementController implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Inject
     private EvenementService evenementService;
 
@@ -33,12 +34,12 @@ public class OrgaEvenementController implements Serializable {
 
     private List<Evenement> mesEvenements;
     private Evenement nouvelEvenement;
-    private CategorieBillet nouvelleCategorie;
+    private Evenement evenementEnEdition;
 
     @PostConstruct
     public void init() {
         nouvelEvenement = new Evenement();
-        nouvelleCategorie = new CategorieBillet();
+        evenementEnEdition = new Evenement();
         chargerMesEvenements();
     }
 
@@ -53,32 +54,6 @@ public class OrgaEvenementController implements Serializable {
     }
 
     /**
-     * Ajoute une nouvelle catégorie de billet à l'événement en cours de création.
-     */
-    public void ajouterCategorie() {
-        if (nouvelleCategorie.getNom() != null && !nouvelleCategorie.getNom().isEmpty() &&
-            nouvelleCategorie.getPrix() != null && nouvelleCategorie.getQuantiteTotale() != null) {
-            
-            nouvelleCategorie.setQuantiteDisponible(nouvelleCategorie.getQuantiteTotale());
-            nouvelEvenement.addCategorieBillet(nouvelleCategorie);
-            
-            // Réinitialiser le formulaire de catégorie
-            nouvelleCategorie = new CategorieBillet();
-            showMessage(FacesMessage.SEVERITY_INFO, "Succès", "Catégorie ajoutée.");
-        } else {
-            showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Veuillez remplir tous les champs de la catégorie.");
-        }
-    }
-
-    /**
-     * Supprime une catégorie de billet de la liste.
-     */
-    public void supprimerCategorie(CategorieBillet categorie) {
-        nouvelEvenement.removeCategorieBillet(categorie);
-        showMessage(FacesMessage.SEVERITY_INFO, "Info", "Catégorie retirée.");
-    }
-
-    /**
      * Enregistre le nouvel événement en base de données.
      */
     public String sauvegarderEvenement() {
@@ -86,7 +61,7 @@ public class OrgaEvenementController implements Serializable {
             Personne utilisateur = authController.getUtilisateurConnecte();
             if (utilisateur instanceof Organisateur) {
                 nouvelEvenement.setOrganisateur((Organisateur) utilisateur);
-                nouvelEvenement.setStatut("Publié"); // ou "Brouillon" selon le bouton cliqué
+                nouvelEvenement.setStatut("Publié"); 
 
                 evenementService.creerEvenement(nouvelEvenement);
                 showMessage(FacesMessage.SEVERITY_INFO, "Succès", "L'événement a été créé avec succès.");
@@ -103,9 +78,85 @@ public class OrgaEvenementController implements Serializable {
         return null;
     }
 
-    /**
-     * Méthode utilitaire pour afficher des messages JSF.
-     */
+    public void preparerModification(Evenement evenement) {
+        if (!estProprietaire(evenement)) {
+            showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Vous ne pouvez pas modifier cet événement.");
+            return;
+        }
+        evenementEnEdition = new Evenement();
+        evenementEnEdition.setId(evenement.getId());
+        evenementEnEdition.setTitre(evenement.getTitre());
+        evenementEnEdition.setDescription(evenement.getDescription());
+        evenementEnEdition.setLieu(evenement.getLieu());
+        evenementEnEdition.setDateEvenement(evenement.getDateEvenement());
+        evenementEnEdition.setStatut(evenement.getStatut());
+        evenementEnEdition.setOrganisateur(evenement.getOrganisateur());
+        evenementEnEdition.setCategoriesBillets(evenement.getCategoriesBillets());
+        evenementEnEdition.setDateCreation(evenement.getDateCreation());
+    }
+
+    public void sauvegarderModification() {
+        try {
+            if (!estProprietaire(evenementEnEdition)) {
+                showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Modification non autorisée.");
+                return;
+            }
+            evenementService.modifierEvenement(evenementEnEdition);
+            chargerMesEvenements();
+            showMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement modifié avec succès.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Impossible de modifier l'événement: " + e.getMessage());
+        }
+    }
+
+    public void supprimerEvenement(Evenement evenement) {
+        try {
+            System.out.println(">>> Tentative de suppression de l'événement: " + (evenement != null ? evenement.getId() : "null"));
+            if (!estProprietaire(evenement)) {
+                System.out.println(">>> ÉCHEC: Pas propriétaire");
+                showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Suppression non autorisée.");
+                return;
+            }
+            evenementService.supprimerEvenement(evenement.getId());
+            System.out.println(">>> SUCCÈS: Événement supprimé");
+            chargerMesEvenements();
+            showMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement supprimé.");
+        } catch (Exception e) {
+            System.err.println(">>> ERREUR lors de la suppression: " + e.getMessage());
+            e.printStackTrace();
+            showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Impossible de supprimer l'événement: " + e.getMessage());
+        }
+    }
+
+    public String resumeBilletterie(Evenement evenement) {
+        if (evenement == null || evenement.getCategoriesBillets() == null || evenement.getCategoriesBillets().isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        int limit = Math.min(2, evenement.getCategoriesBillets().size());
+        for (int i = 0; i < limit; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(evenement.getCategoriesBillets().get(i).getNom());
+        }
+        if (evenement.getCategoriesBillets().size() > 2) {
+            sb.append("...");
+        }
+        return sb.toString();
+    }
+
+    private boolean estProprietaire(Evenement evenement) {
+        if (evenement == null || evenement.getOrganisateur() == null || evenement.getId() == null) {
+            return false;
+        }
+        Personne utilisateur = authController.getUtilisateurConnecte();
+        return utilisateur instanceof Organisateur
+                && utilisateur.getId() != null
+                && utilisateur.getId().equals(evenement.getOrganisateur().getId());
+    }
+
     private void showMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }

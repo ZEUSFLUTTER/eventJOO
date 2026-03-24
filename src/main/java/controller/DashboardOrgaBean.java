@@ -1,6 +1,7 @@
 package controller;
 
 import entities.Personne;
+import entities.Evenement;
 import service.PersonneService;
 import service.EvenementService;
 import jakarta.annotation.PostConstruct;
@@ -11,6 +12,11 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.optionconfig.title.Title;
 
 /**
  * Dashboard Organisateur Bean - ORGANISATEUR UNIQUEMENT
@@ -36,7 +42,7 @@ public class DashboardOrgaBean implements Serializable {
     @Inject
     private AuthController authController;
     
-    // KPIs ORGANISATEUR - CORRECTION : Chiffre d'affaires en FCFA
+    // KPIs ORGANISATEUR
     private long mesEvenements;
     private long billetsVendus;
     private long mesEmployes;
@@ -46,11 +52,15 @@ public class DashboardOrgaBean implements Serializable {
     // Données spécifiques à l'organisateur
     private List<EvenementData> evenementsRecents;
     private List<Personne> employesOrganisateur;
+    private BarChartModel barModel;
     
     @PostConstruct
     public void init() {
+        barModel = new BarChartModel(); // Initialisation par défaut
+        System.out.println(">>> DashboardOrgaBean.init() appelé");
         // SÉCURITÉ : Vérifier que l'utilisateur est ORGANISATEUR
         if (!securityHelper.isOrganisateur()) {
+            System.out.println(">>> ACCÈS REFUSÉ: Pas un organisateur");
             securityHelper.redirectToUnauthorized();
             return;
         }
@@ -63,30 +73,29 @@ public class DashboardOrgaBean implements Serializable {
      */
     private void loadOrganisateurData() {
         try {
+            System.out.println(">>> Chargement des données Organisateur...");
             Personne organisateurConnecte = authController.getUtilisateurConnecte();
+            if (organisateurConnecte == null) {
+                System.out.println(">>> ERREUR: Utilisateur connecté est NULL");
+                return;
+            }
             Long organisateurId = organisateurConnecte.getId();
+            System.out.println(">>> Organisateur ID: " + organisateurId);
             
-            // KPIs spécifiques à cet organisateur
-            // KPIs réels basés sur les données en base
-            mesEvenements = evenementService.countTotalTicketsVendus(organisateurId) == 0 && mesEvenements == 0 ? evenementService.countEvenementsByOrganisateur(organisateurId) : evenementService.countEvenementsByOrganisateur(organisateurId);
-            // On s'assure d'avoir les vrais chiffres demandés par le client
+            // KPIs réels
+            mesEvenements = evenementService.countEvenementsByOrganisateur(organisateurId);
             billetsVendus = evenementService.countTotalTicketsVendus(organisateurId);
             mesEmployes = personneService.countEmployesByOrganisateur(organisateurId);
             mesClients = evenementService.countTotalClients(organisateurId);
             revenue = evenementService.calculateTotalRevenue(organisateurId);
             
-            // Charger les employés de cet organisateur (simulé pour l'instant)
-            employesOrganisateur = new ArrayList<>();
-            
-            // Événements récents (simulés)
+            // Événements récents (simulés ou réels)
             creerEvenementsRecents();
             
+            // Initialiser le graphique
+            initBarModel(organisateurId);
+            
             System.out.println("=== DASHBOARD ORGANISATEUR CHARGÉ ===");
-            System.out.println("Organisateur ID: " + organisateurId);
-            System.out.println("Mes Événements: " + mesEvenements);
-            System.out.println("Billets Vendus: " + billetsVendus);
-            System.out.println("Mes Employés: " + mesEmployes);
-            System.out.println("Mes Clients: " + mesClients);
             
         } catch (Exception e) {
             System.err.println("Erreur lors du chargement des données ORGANISATEUR: " + e.getMessage());
@@ -94,66 +103,80 @@ public class DashboardOrgaBean implements Serializable {
         }
     }
     
+    private void initBarModel(Long organisateurId) {
+        barModel = new BarChartModel();
+        ChartData data = new ChartData();
+
+        BarChartDataSet barDataSet = new BarChartDataSet();
+        barDataSet.setLabel("Billets Vendus");
+
+        List<Evenement> evts = evenementService.getEvenementsByOrganisateur(organisateurId);
+        List<Object> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        List<String> bgColor = new ArrayList<>();
+        List<String> borderColor = new ArrayList<>();
+
+        for (Evenement ev : evts) {
+            labels.add(ev.getTitre());
+            long sold = ev.getCategoriesBillets().stream()
+                    .mapToLong(cat -> cat.getQuantiteTotale() - cat.getQuantiteDisponible())
+                    .sum();
+            values.add(sold);
+            
+            // Palette premium (bleu)
+            bgColor.add("rgba(59, 130, 246, 0.2)");
+            borderColor.add("rgb(59, 130, 246)");
+        }
+
+        barDataSet.setData(values);
+        barDataSet.setBackgroundColor(bgColor);
+        barDataSet.setBorderColor(borderColor);
+        barDataSet.setBorderWidth(1);
+
+        data.addChartDataSet(barDataSet);
+        data.setLabels(labels);
+        barModel.setData(data);
+
+        // Options
+        BarChartOptions options = new BarChartOptions();
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Ventes par Événement");
+        title.setFontSize(16);
+        options.setTitle(title);
+
+        barModel.setOptions(options);
+    }
+    
     /**
      * Crée les événements récents (simulés)
      */
     private void creerEvenementsRecents() {
         evenementsRecents = new ArrayList<>();
-        evenementsRecents.add(new EvenementData("Concert Jazz Festival", "15/04/2026", 45, "Actif"));
-        evenementsRecents.add(new EvenementData("Soirée Gala Entreprise", "22/04/2026", 120, "Complet"));
-        evenementsRecents.add(new EvenementData("Conférence Tech 2026", "05/05/2026", 80, "Actif"));
-        evenementsRecents.add(new EvenementData("Festival d'Été", "15/06/2026", 200, "Bientôt"));
+        evenementsRecents.add(new EvenementData("Concert Jazz", "15/04/2026", 45, "Actif"));
+        evenementsRecents.add(new EvenementData("Gala", "22/04/2026", 120, "Complet"));
     }
     
-    /**
-     * Navigation vers la gestion des employés
-     */
     public String gererEmployes() {
         return "users_management_orga?faces-redirect=true";
     }
     
-    /**
-     * Navigation vers la gestion des clients
-     */
     public String gererClients() {
         return "users_management_orga?faces-redirect=true";
     }
     
-    /**
-     * Navigation vers la création d'événement
-     */
     public String creerEvenement() {
         return "orga_creer_evenement?faces-redirect=true";
     }
     
-    // Getters pour les taux (simulés)
-    public String getTauxConversion() {
-        return "77.1%";
-    }
-    
-    public String getCroissanceCA() {
-        return "+18.5%";
-    }
-    
-    public String getCroissanceEvenements() {
-        return "+12.3%";
-    }
-    
-    /**
-     * Retourne le chiffre d'affaires formaté en FCFA
-     */
     public String getChiffreAffaires() {
         java.text.NumberFormat nf = java.text.NumberFormat.getInstance(java.util.Locale.FRANCE);
         return nf.format(revenue) + " FCFA";
     }
     
-    /**
-     * Classe interne pour représenter un événement
-     */
     @Data
     public static class EvenementData implements Serializable {
         private static final long serialVersionUID = 1L;
-        
         private String nom;
         private String date;
         private int billets;

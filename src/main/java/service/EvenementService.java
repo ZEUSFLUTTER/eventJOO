@@ -1,10 +1,11 @@
 package service;
 
+import java.util.List;
+
 import dao.EvenementDao;
 import entities.Evenement;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import java.util.List;
 
 /**
  * Service de gestion des événements métiers.
@@ -34,6 +35,10 @@ public class EvenementService {
         return evenementDao.findAll();
     }
 
+    public List<Evenement> getPublicEvents() {
+        return evenementDao.findPublicEvents();
+    }
+
     /**
      * Récupère les événements d'un organisateur spécifique.
      */
@@ -53,6 +58,10 @@ public class EvenementService {
      */
     public void supprimerEvenement(Long id) {
         evenementDao.delete(id);
+    }
+
+    public void modifierEvenement(Evenement evenement) {
+        evenementDao.update(evenement);
     }
 
     /**
@@ -95,7 +104,6 @@ public class EvenementService {
      * Note: Actuellement simulé par le nombre de billets vendus / 1.5 car pas d'entité Billet directe.
      */
     public long countTotalClients(Long organisateurId) {
-        long sold = countTotalTicketsVendus(organisateurId);
-        return (long) Math.ceil(sold / 1.5); // Approximation réaliste
+        return evenementDao.countUniqueClientsByOrganisateur(organisateurId);
     }
 }
