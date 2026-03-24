@@ -2,6 +2,7 @@ package controller;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Data;
 import java.io.Serializable;
@@ -24,6 +25,7 @@ public class IndexController implements Serializable {
     private service.EvenementService evenementService;
 
     private List<Evenement> evenements;
+    private Evenement selectedEvent;
     private String rechercheTexte;
     
     @PostConstruct
@@ -51,7 +53,8 @@ public class IndexController implements Serializable {
                 prixStr,
                 e.getDescription(),
                 dateStr,
-                icone
+                icone,
+                e
             ));
         }
     }
@@ -115,14 +118,18 @@ public class IndexController implements Serializable {
         private String description;
         private String date;
         private String icone;
+        private entities.Evenement realEvenement;
         
-        public Evenement(String titre, String lieu, String prix, String description, String date, String icone) {
+        public Evenement(String titre, String lieu, String prix, String description, String date, String icone, entities.Evenement realEvenement) {
             this.titre = titre;
             this.lieu = lieu;
             this.prix = prix;
             this.description = description;
             this.date = date;
             this.icone = icone;
+            this.realEvenement = realEvenement;
         }
     }
+    public Evenement getSelectedEvent() { return selectedEvent; }
+    public void setSelectedEvent(Evenement selectedEvent) { this.selectedEvent = selectedEvent; }
 }

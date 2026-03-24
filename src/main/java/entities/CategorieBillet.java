@@ -54,4 +54,7 @@ public class CategorieBillet implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "evenement_id", nullable = false)
     private Evenement evenement;
+
+    @jakarta.persistence.OneToMany(mappedBy = "categorieBillet", cascade = jakarta.persistence.CascadeType.ALL)
+    private java.util.List<Billet> billets = new java.util.ArrayList<>();
 }

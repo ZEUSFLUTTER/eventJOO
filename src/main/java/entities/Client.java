@@ -22,8 +22,8 @@ import lombok.Setter;
 @Setter
 public class Client extends Personne {
     
-    /*@OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<Billet> billets = new ArrayList<>();*/
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Billet> billets = new ArrayList<>();
     
     @Override
     public boolean equals(Object o) {

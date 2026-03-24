@@ -46,33 +46,7 @@ public class ClientDashboardController implements Serializable {
      */
     private void chargerMesBillets() {
         mesBillets = new ArrayList<>();
-        
-        mesBillets.add(new Billet(
-            "Festival Jazz 2026",
-            "15 Mars 2026",
-            "Paris, France",
-            "45€",
-            "Confirmé",
-            "success"
-        ));
-        
-        mesBillets.add(new Billet(
-            "Conférence Tech Innovation",
-            "22 Mars 2026",
-            "Lyon, France",
-            "Gratuit",
-            "Confirmé",
-            "success"
-        ));
-        
-        mesBillets.add(new Billet(
-            "Concert Rock Summer",
-            "25 Avril 2026",
-            "Marseille, France",
-            "65€",
-            "En attente",
-            "warning"
-        ));
+        // Les billets réels sont maintenant gérés par BilletController dans la vue
     }
     
     /**

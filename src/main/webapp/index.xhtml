@@ -437,9 +437,11 @@
                                                 styleClass="btn-event"
                                                 icon="pi pi-bookmark"
                                                 iconPos="right"
-                                                action="#{indexController.voirDetails(event)}"
-                                                update=":growl"
-                                                process="@this"/>
+                                                oncomplete="PF('purchaseDialog').show()"
+                                                update=":purchaseDialogForm"
+                                                process="@this">
+                                                <f:setPropertyActionListener value="#{event}" target="#{indexController.selectedEvent}" />
+                                            </p:commandButton>
                                         </h:form>
                                     </div>
                                 </div>
@@ -469,5 +471,53 @@
                 </div>
             </div>
         </section>
+
+        <!-- Purchase Dialog -->
+        <p:dialog id="purchaseDialog" widgetVar="purchaseDialog" modal="true" responsive="true" 
+                  header="Réserver votre place" showEffect="fade" hideEffect="fade" 
+                  styleClass="premium-dialog" width="500">
+            <h:form id="purchaseDialogForm">
+                <div class="p-4">
+                    <h3 class="font-bold text-xl mb-4">#{indexController.selectedEvent.titre}</h3>
+                    <p class="text-gray-600 mb-6">Choisissez votre catégorie de billet :</p>
+                    
+                    <ui:repeat value="#{indexController.selectedEvent.realEvenement.categoriesBillets}" var="cat">
+                        <div class="flex items-center justify-between p-4 mb-3 border rounded-xl hover:bg-slate-50 transition-colors">
+                            <div style="flex: 1;">
+                                <div class="font-bold text-lg">#{cat.nom}</div>
+                                <div class="text-sm text-gray-500">#{cat.quantiteDisponible} places restantes</div>
+                            </div>
+                            <div class="flex items-center gap-4" style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="font-black" style="color: var(--brand-primary); font-weight: 900;">
+                                    <h:outputText value="#{cat.prix}">
+                                        <f:convertNumber type="currency" currencySymbol="€" />
+                                    </h:outputText>
+                                </div>
+                                <p:commandButton value="Acheter" 
+                                                 action="#{billetController.acheterBillet(cat)}"
+                                                 disabled="#{cat.quantiteDisponible le 0}"
+                                                 styleClass="ui-button-raised ui-button-help"
+                                                 update=":growl"/>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <style>
+            .premium-dialog.ui-dialog {
+                border-radius: 24px !important;
+                overflow: hidden !important;
+                border: none !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            }
+            .premium-dialog .ui-dialog-titlebar {
+                background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary)) !important;
+                color: white !important;
+                padding: 1.5rem !important;
+                font-weight: 800 !important;
+            }
+        </style>
     </ui:define>
 </ui:composition>

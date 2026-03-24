@@ -214,61 +214,58 @@
                     id="billetsTable"
                     value="#{billetController.billets}" 
                     var="billet"
-                    rowKey="#{billet.numeroBillet}"
+                    rowKey="#{billet.id}"
                     emptyMessage="Vous n'avez aucun billet pour le moment"
                     paginator="true"
                     rows="10"
                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                     currentPageReportTemplate="Affichage de {startRecord} à {endRecord} sur {totalRecords} billets">
                     
-                    <p:column headerText="N° Billet" style="width: 120px;">
-                        <h:outputText value="#{billet.numeroBillet}" style="font-family: monospace; font-weight: 600;"/>
+                    <p:column headerText="ID" style="width: 60px;">
+                        <h:outputText value="#{billet.id}" style="font-family: monospace; font-weight: 600;"/>
                     </p:column>
                     
-                    <p:column headerText="Événement" sortBy="#{billet.nomEvenement}">
-                        <h:outputText value="#{billet.nomEvenement}" style="font-weight: 600; color: #0047FF;"/>
+                    <p:column headerText="Événement" sortBy="#{billet.categorieBillet.evenement.titre}">
+                        <h:outputText value="#{billet.categorieBillet.evenement.titre}" style="font-weight: 600; color: #0047FF;"/>
                     </p:column>
                     
                     <p:column headerText="Lieu">
-                        <h:outputText value="#{billet.lieu}"/>
+                        <h:outputText value="#{billet.categorieBillet.evenement.lieu}"/>
                     </p:column>
                     
-                    <p:column headerText="Date" sortBy="#{billet.dateEvenement}">
-                        <h:outputText value="#{billet.dateFormatee}"/>
+                    <p:column headerText="Achat" sortBy="#{billet.dateAchat}">
+                        <h:outputText value="#{billet.dateAchat}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="both"/>
+                        </h:outputText>
                     </p:column>
                     
                     <p:column headerText="Catégorie" style="width: 120px; text-align: center;">
-                        <span class="badge badge-info">#{billet.categorie}</span>
+                        <span class="badge badge-info">#{billet.categorieBillet.nom}</span>
                     </p:column>
                     
                     <p:column headerText="Statut" style="width: 120px; text-align: center;">
-                        <span class="badge #{billet.statut == 'Confirmé' ? 'badge-success' : 'badge-warning'}">
+                        <span class="badge #{billet.statut == 'Valide' ? 'badge-success' : 'badge-warning'}">
                             #{billet.statut}
                         </span>
                     </p:column>
                     
                     <p:column headerText="Prix" style="width: 100px; text-align: right;">
-                        <h:outputText value="#{billet.prix}" style="font-weight: 600;">
-                            <f:convertNumber type="currency" currencySymbol="FCFA" />
+                        <h:outputText value="#{billet.categorieBillet.prix}" style="font-weight: 600;">
+                            <f:convertNumber type="currency" currencySymbol="€" />
                         </h:outputText>
                     </p:column>
                     
                     <p:column headerText="Actions" style="width: 150px; text-align: center;">
                         <p:commandButton 
-                            icon="pi pi-eye" 
+                            icon="pi pi-qrcode" 
                             styleClass="btn-action"
-                            title="Voir le billet"
+                            title="Voir le QR Code"
                             style="margin-right: 5px;"
-                            action="#{billetController.voirBillet(billet)}"
-                            update=":growl"
-                            process="@this"/>
-                        <p:commandButton 
-                            icon="pi pi-download" 
-                            styleClass="btn-action"
-                            title="Télécharger"
-                            action="#{billetController.telechargerBillet(billet)}"
-                            update=":growl"
-                            process="@this"/>
+                            oncomplete="PF('qrDialog').show()"
+                            update=":qrDialogForm"
+                            process="@this">
+                            <f:setPropertyActionListener value="#{billet}" target="#{billetController.billetSelectionne}" />
+                        </p:commandButton>
                     </p:column>
                 </p:dataTable>
             </h:form>
@@ -278,9 +275,24 @@
         <p:panel header="Information" style="margin-top: 20px;">
             <p style="color: #6c757d; line-height: 1.6;">
                 <i class="pi pi-info-circle" style="color: #0047FF; margin-right: 8px;"></i>
-                Les billets affichés ci-dessus sont des données de démonstration. 
-                Une fois l'entité Billet créée et liée à votre compte, vos vrais billets apparaîtront ici.
+                Vos billets sont sécurisés. Présentez le code QR à l'entrée de l'événement pour validation.
             </p>
         </p:panel>
+
+        <!-- QR Code Dialog -->
+        <p:dialog id="qrDialog" widgetVar="qrDialog" modal="true" responsive="true" 
+                  header="Votre QR Code" showEffect="fade" hideEffect="fade" 
+                  width="400" textAlign="center">
+            <h:form id="qrDialogForm" style="text-align: center; padding: 20px;">
+                <h3 style="margin-bottom: 20px; font-weight: 700;">#{billetController.billetSelectionne.categorieBillet.evenement.titre}</h3>
+                <div style="background: white; padding: 10px; display: inline-block; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h:graphicImage value="#{billetController.billetSelectionne.codeQR}" width="250" height="250" />
+                </div>
+                <div style="margin-top: 20px; font-size: 14px; color: #6c757d;">
+                    Billet N° #{billetController.billetSelectionne.id} - #{billetController.billetSelectionne.categorieBillet.nom}
+                </div>
+                <p:commandButton value="Fermer" onclick="PF('qrDialog').hide()" styleClass="ui-button-flat" style="margin-top: 20px;"/>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>
