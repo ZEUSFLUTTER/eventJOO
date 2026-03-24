@@ -1,11 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="jakarta.faces.html"
-                xmlns:f="jakarta.faces.core"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:ui="jakarta.faces.facelets"
-                template="/WEB-INF/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:p="http://primefaces.org/ui" xmlns:ui="jakarta.faces.facelets" template="/WEB-INF/template.xhtml">
 
     <ui:define name="title">Créer un Événement</ui:define>
 
@@ -25,15 +21,16 @@
                 margin-bottom: 30px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
                 border: 1px solid #f1f5f9;
+                height: 100%;
             }
-            
+
             .section-header {
                 display: flex;
                 align-items: center;
                 gap: 15px;
                 margin-bottom: 25px;
             }
-            
+
             .section-icon {
                 width: 48px;
                 height: 48px;
@@ -45,7 +42,7 @@
                 justify-content: center;
                 font-size: 20px;
             }
-            
+
             .section-title {
                 font-size: 22px;
                 font-weight: 800;
@@ -53,7 +50,7 @@
                 margin: 0;
                 letter-spacing: -0.5px;
             }
-            
+
             .form-label {
                 display: block;
                 font-weight: 700;
@@ -61,24 +58,22 @@
                 margin-bottom: 10px;
                 font-size: 14px;
             }
-            
+
             .ui-inputfield {
                 width: 100% !important;
-                padding: 14px 18px !important;
+                padding: 12px 16px !important;
                 background: #f8fafc !important;
                 border: 2px solid transparent !important;
-                border-radius: 14px !important;
-                font-size: 15px !important;
-                font-weight: 500 !important;
+                border-radius: 12px !important;
                 transition: all 0.3s ease !important;
             }
-            
+
             .ui-inputfield:focus {
                 background: white !important;
                 border-color: #3b82f6 !important;
                 box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
             }
-            
+
             .btn-premium-launch {
                 background: linear-gradient(135deg, #0047FF 0%, #0039CC 100%) !important;
                 border: none !important;
@@ -86,21 +81,18 @@
                 padding: 16px 40px !important;
                 border-radius: 16px !important;
                 font-weight: 800 !important;
-                font-size: 16px !important;
-                letter-spacing: 0.5px !important;
                 box-shadow: 0 10px 25px rgba(0, 71, 255, 0.2) !important;
-                transition: all 0.3s ease !important;
             }
-            
+
             .btn-premium-launch:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 15px 35px rgba(0, 71, 255, 0.3) !important;
             }
-            
+
             .category-builder {
                 background: #f8fafc;
                 border-radius: 20px;
-                padding: 30px;
+                padding: 25px;
                 border: 1px dashed #cbd5e1;
             }
         </style>
@@ -109,50 +101,84 @@
             <p:growl id="messages" showDetail="true" />
 
             <div class="row">
-                <!-- Main Info Column -->
                 <div class="col-lg-7">
                     <div class="creation-card">
                         <div class="section-header">
-                            <div class="section-icon">
-                                <i class="pi pi-file-edit"></i>
-                            </div>
+                            <div class="section-icon"><i class="pi pi-file-edit"></i></div>
                             <h3 class="section-title">Détails de l'Événement</h3>
                         </div>
-                        
+
                         <div class="ui-fluid">
                             <div class="form-group mb-4">
-                                <h:outputLabel for="titre" value="Nom de l'événement" styleClass="form-label"/>
-                                <p:inputText id="titre" value="#{orgaEvenementController.nouvelEvenement.titre}" required="true" placeholder="Ex: Festival des Lumières 2026"/>
+                                <p:outputLabel for="titre" value="Nom de l'événement" styleClass="form-label" />
+                                <p:inputText id="titre" value="#{orgaEvenementController.nouvelEvenement.titre}"
+                                    required="true" requiredMessage="Le titre est obligatoire"
+                                    placeholder="Ex: Festival des Lumières 2026" />
                             </div>
-                            
+
                             <div class="form-group mb-4">
-                                <h:outputLabel for="description" value="Description" styleClass="form-label"/>
-                                <p:inputTextarea id="description" value="#{orgaEvenementController.nouvelEvenement.description}" rows="6" placeholder="Décrivez l'expérience unique que vous proposez..."/>
+                                <p:outputLabel for="description" value="Description" styleClass="form-label" />
+                                <p:inputTextarea id="description" rows="6"
+                                    value="#{orgaEvenementController.nouvelEvenement.description}"
+                                    placeholder="Décrivez l'expérience unique que vous proposez..." />
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-4">
-                                    <div class="form-group">
-                                        <h:outputLabel for="lieu" value="Lieu / Adresse" styleClass="form-label"/>
-                                        <p:inputText id="lieu" value="#{orgaEvenementController.nouvelEvenement.lieu}" required="true" placeholder="Ville, Salle ou Adresse"/>
-                                    </div>
+                                    <p:outputLabel for="lieu" value="Lieu / Adresse" styleClass="form-label" />
+                                    <p:inputText id="lieu" value="#{orgaEvenementController.nouvelEvenement.lieu}"
+                                        required="true" placeholder="Ville, Salle ou Adresse" />
                                 </div>
                                 <div class="col-md-6 mb-4">
-                                    <div class="form-group">
-                                        <h:outputLabel for="dateEvent" value="Date et Heure" styleClass="form-label"/>
-                                        <p:datePicker id="dateEvent" value="#{orgaEvenementController.nouvelEvenement.dateEvenement}" showTime="true" required="true"/>
-                                    </div>
+                                    <p:outputLabel for="dateEvent" value="Date et Heure" styleClass="form-label" />
+                                    <p:datePicker id="dateEvent"
+                                        value="#{orgaEvenementController.nouvelEvenement.dateEvenement}" showTime="true"
+                                        hourFormat="24" required="true" pattern="dd/MM/yyyy HH:mm" />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="col-lg-5">
+                    <div class="creation-card">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="pi pi-sliders-h"></i></div>
+                            <h3 class="section-title">Configuration</h3>
+                        </div>
+
+                        <div class="category-builder">
+                            <div class="form-group mb-3">
+                                <p:outputLabel value="Type d'événement" styleClass="form-label" />
+                                <p:selectOneMenu id="type" value="#{orgaEvenementController.nouvelEvenement.type}">
+                                    <f:selectItem itemLabel="Sélectionnez un type" itemValue="" />
+                                    <f:selectItem itemLabel="Concert" itemValue="CONCERT" />
+                                    <f:selectItem itemLabel="Conférence" itemValue="CONFERENCE" />
+                                    <f:selectItem itemLabel="Sport" itemValue="SPORT" />
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <p:outputLabel value="Visibilité" styleClass="form-label" />
+                                <div class="d-flex align-items-center gap-2">
+                                    <p:toggleSwitch value="#{orgaEvenementController.nouvelEvenement.estPublic}" />
+                                    <h:outputText value="Rendre l'événement public" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 border-round bg-blue-50 text-blue-700 text-sm">
+                            <i class="pi pi-info-circle mr-2"></i>
+                            Une fois lancé, l'événement sera immédiatement visible par votre communauté.
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-center gap-3 mt-5">
-                <p:commandButton value="Lancer l'Événement" action="#{orgaEvenementController.sauvegarderEvenement}" 
-                                 styleClass="btn-premium-launch" icon="pi pi-rocket" update="messages formCreerEvenement" />
+
+            <div class="d-flex justify-content-center gap-3 mt-5 pb-5">
+                <p:commandButton value="Lancer l'Événement" action="#{orgaEvenementController.sauvegarderEvenement}"
+                    styleClass="btn-premium-launch" icon="pi pi-rocket" update="messages formCreerEvenement" />
+
                 <p:button outcome="orga_evenements" value="Annuler" styleClass="ui-button-flat ui-button-secondary" />
             </div>
         </h:form>

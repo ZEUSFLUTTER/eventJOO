@@ -90,9 +90,9 @@ public class OrgaBilletController implements Serializable {
             }
             Evenement ev = evenementService.trouverParId(selectedEvenementId);
             if (ev != null) {
-                nouvelleCategorie.setEvenement(ev);
-                nouvelleCategorie.setQuantiteDisponible(nouvelleCategorie.getQuantiteTotale());
+                ev.addCategorieBillet(nouvelleCategorie);
                 categorieBilletDao.save(nouvelleCategorie);
+                
                 PrimeFaces.current().executeScript("Swal.fire('Succès', 'Nouvelle catégorie ajoutée.', 'success');");
                 chargerDonnees();
                 preparerNouvelleCategorie();
@@ -113,7 +113,7 @@ public class OrgaBilletController implements Serializable {
         } catch (Exception e) {
             System.err.println(">>> ERREUR lors de la suppression de catégorie: " + e.getMessage());
             e.printStackTrace();
-            PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Impossible de supprimer la catégorie.', 'error');");
+            PrimeFaces.current().executeScript("Swal.fire('Erreur SQL', 'Impossible de supprimer cette catégorie. Elle contient probablement déjà des billets vendus.', 'error');");
         }
     }
 }

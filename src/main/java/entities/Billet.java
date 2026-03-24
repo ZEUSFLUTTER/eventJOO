@@ -49,6 +49,10 @@ public class Billet implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
+    @ManyToOne
+    @JoinColumn(name = "vendeur_id")
+    private Employe vendeur;
     
     @jakarta.persistence.PrePersist
     protected void onCreate() {

@@ -57,4 +57,7 @@ public class CategorieBillet implements Serializable {
 
     @jakarta.persistence.OneToMany(mappedBy = "categorieBillet", cascade = jakarta.persistence.CascadeType.ALL)
     private java.util.List<Billet> billets = new java.util.ArrayList<>();
+
+    @jakarta.persistence.OneToMany(mappedBy = "categorieBillet", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<AttributionBillet> attributions = new java.util.ArrayList<>();
 }

@@ -115,17 +115,17 @@ public class OrgaEvenementController implements Serializable {
             System.out.println(">>> Tentative de suppression de l'événement: " + (evenement != null ? evenement.getId() : "null"));
             if (!estProprietaire(evenement)) {
                 System.out.println(">>> ÉCHEC: Pas propriétaire");
-                showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Suppression non autorisée.");
+                org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Suppression non autorisée.', 'error');");
                 return;
             }
             evenementService.supprimerEvenement(evenement.getId());
             System.out.println(">>> SUCCÈS: Événement supprimé");
             chargerMesEvenements();
-            showMessage(FacesMessage.SEVERITY_INFO, "Succès", "Événement supprimé.");
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Succès', 'L\\'événement a été supprimé.', 'success');");
         } catch (Exception e) {
             System.err.println(">>> ERREUR lors de la suppression: " + e.getMessage());
             e.printStackTrace();
-            showMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Impossible de supprimer l'événement: " + e.getMessage());
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur SQL/Système', 'Impossible de supprimer l\\'événement. Vérifiez qu\\'aucun billet n\\'a été vendu.', 'error');");
         }
     }
 

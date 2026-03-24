@@ -62,6 +62,12 @@ public class Evenement implements Serializable {
     @Column(nullable = false, length = 20)
     private String statut; // e.g. "Brouillon", "Publié", "Annulé"
 
+    @Column(length = 50)
+    private String type; // e.g. "CONCERT", "CONFERENCE", "SPORT"
+
+    @Column(name = "est_public")
+    private boolean estPublic = true;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "organisateur_id", nullable = false)
     private Organisateur organisateur;

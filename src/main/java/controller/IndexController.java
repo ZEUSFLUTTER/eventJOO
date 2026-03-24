@@ -138,8 +138,8 @@ public class IndexController implements Serializable {
         }
         
         if (min == 0 && max == 0) return "Gratuit";
-        if (min == max) return String.format("%.0f€", min);
-        return String.format("%.0f€ - %.0f€", min, max);
+        if (min == max) return String.format("%,.0f FCFA", min);
+        return String.format("%,.0f - %,.0f FCFA", min, max);
     }
 
     private String determineIcon(entities.Evenement e) {

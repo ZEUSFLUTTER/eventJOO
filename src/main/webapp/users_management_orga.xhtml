@@ -313,6 +313,16 @@
                                         target="#{userOrgaController.utilisateurASupprimer}" 
                                         value="#{user}"/>
                                 </p:commandButton>
+
+                                <p:commandButton 
+                                    icon="pi pi-ticket" 
+                                    styleClass="ui-button-flat ui-button-help rounded-circle"
+                                    action="#{userOrgaController.preparerAffectation(user)}"
+                                    update=":attributionForm"
+                                    oncomplete="PF('attributionDialog').show()"
+                                    process="@this"
+                                    rendered="#{user.role == 'EMPLOYE'}"
+                                    title="Affecter Billets"/>
                             </div>
                         </p:column>
                     </p:dataTable>
@@ -388,6 +398,78 @@
                         update=":addUserForm :mainForm:tableUtilisateurs"
                         oncomplete="if (!args || !args.validationFailed) PF('addUserDialog').hide()"
                         process="@form"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Dialog d'affectation de billets -->
+        <p:dialog header="Affectation de billets : #{userOrgaController.utilisateurSelectionne.prenom} #{userOrgaController.utilisateurSelectionne.nom}" 
+                  widgetVar="attributionDialog" modal="true" 
+                  responsive="true" width="800" closeOnEscape="true" styleClass="modal-form">
+            <h:form id="attributionForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 120px 150px; gap: 15px; align-items: end; background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <div class="form-field" style="margin-bottom: 0;">
+                        <label>Événement</label>
+                        <p:selectOneMenu value="#{userOrgaController.idEvenementSelectionne}" filter="true">
+                            <f:selectItem itemLabel="Sélectionner..." itemValue=""/>
+                            <f:selectItems value="#{userOrgaController.mesEvenements}" var="e" itemLabel="#{e.titre}" itemValue="#{e.id}"/>
+                            <p:ajax listener="#{userOrgaController.onEvenementChange()}" update="selectCat"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-field" style="margin-bottom: 0;">
+                        <label>Catégorie</label>
+                        <p:selectOneMenu id="selectCat" value="#{userOrgaController.idCategorieSelectionnee}">
+                            <f:selectItem itemLabel="Sélectionner..." itemValue=""/>
+                            <f:selectItems value="#{userOrgaController.categoriesEvenement}" var="c" itemLabel="#{c.nom} (#{c.quantiteDisponible} dispo)" itemValue="#{c.id}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-field" style="margin-bottom: 0;">
+                        <label>Quantité</label>
+                        <p:inputNumber value="#{userOrgaController.nouvelleAttribution.quantiteAssignee}" decimalPlaces="0" min="1"/>
+                    </div>
+                    
+                    <p:commandButton value="Affecter" icon="pi pi-plus" action="#{userOrgaController.ajouterAttribution()}" 
+                                     update="attributionForm" process="@form" styleClass="btn-primary-orga"/>
+                </div>
+                
+                <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 15px;">Billets actuellement affectés</h3>
+                
+                <p:dataTable value="#{userOrgaController.attributionsEmploye}" var="attr" 
+                             emptyMessage="Aucun billet affecté à cet employé"
+                             styleClass="premium-table">
+                    <p:column headerText="Événement">
+                        #{attr.categorieBillet.evenement.titre}
+                    </p:column>
+                    <p:column headerText="Catégorie">
+                        #{attr.categorieBillet.nom}
+                    </p:column>
+                    <p:column headerText="Quota Total" style="text-align: center;">
+                        <span class="badge" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 8px; font-weight: 700;">
+                            #{attr.quantiteAssignee}
+                        </span>
+                    </p:column>
+                    <p:column headerText="Vendus" style="text-align: center;">
+                        <span class="badge" style="background: #f0fdf4; color: #16a34a; padding: 4px 10px; border-radius: 8px; font-weight: 700;">
+                            #{attr.quantiteVendue}
+                        </span>
+                    </p:column>
+                    <p:column headerText="Reste" style="text-align: center;">
+                        <span class="badge" style="background: #fff7ed; color: #ea580c; padding: 4px 10px; border-radius: 8px; font-weight: 700;">
+                            #{attr.reste}
+                        </span>
+                    </p:column>
+                    <p:column headerText="Action" style="text-align: center; width: 100px;">
+                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-flat ui-button-danger"
+                                         action="#{userOrgaController.supprimerAttribution(attr)}"
+                                         update="attributionForm" process="@this"
+                                         title="Annuler l'attribution"/>
+                    </p:column>
+                </p:dataTable>
+                
+                <div style="text-align: right; margin-top: 20px;">
+                    <p:commandButton value="Fermer" styleClass="p-button-secondary" onclick="PF('attributionDialog').hide(); return false;"/>
                 </div>
             </h:form>
         </p:dialog>

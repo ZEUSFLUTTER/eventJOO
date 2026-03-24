@@ -100,7 +100,9 @@
                                          action="#{orgaBilletController.preparerModification(cat)}" 
                                          oncomplete="PF('editBilletDialog').show()" update=":editBilletForm"/>
                         <p:commandButton icon="pi pi-trash" styleClass="ui-button-flat ui-button-danger rounded-circle" 
-                                         action="#{orgaBilletController.supprimerCategorie(cat)}" update="dt-categories"/>
+                                         action="#{orgaBilletController.supprimerCategorie(cat)}" 
+                                         update="dt-categories"
+                                         process="@this"/>
                     </p:column>
                 </p:dataTable>
             </div>

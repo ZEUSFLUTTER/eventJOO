@@ -20,10 +20,6 @@ public class EvenementService {
      * Crée un nouvel événement et persiste ses catégories de billets.
      */
     public void creerEvenement(Evenement evenement) {
-        if (evenement.getCategoriesBillets().isEmpty()) {
-            throw new IllegalArgumentException("L'événement doit avoir au moins une catégorie de billet.");
-        }
-        
         System.out.println("Création de l'événement: " + evenement.getTitre());
         evenementDao.save(evenement);
     }

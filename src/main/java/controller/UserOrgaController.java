@@ -1,11 +1,16 @@
 package controller;
 
+import entities.AttributionBillet;
+import entities.Evenement;
+import entities.CategorieBillet;
 import entities.Client;
 import entities.Employe;
 import entities.Organisateur;
 import entities.Personne;
 import entities.Personne.Role;
 import service.PersonneService;
+import service.AttributionBilletService;
+import service.EvenementService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -38,6 +43,12 @@ public class UserOrgaController implements Serializable {
     @Inject
     private AuthController authController;
     
+    @Inject
+    private AttributionBilletService attributionService;
+    
+    @Inject
+    private EvenementService evenementService;
+    
     // Données
     private List<Personne> mesUtilisateurs;
     private Personne nouvelUtilisateur;
@@ -45,6 +56,14 @@ public class UserOrgaController implements Serializable {
     private Personne utilisateurASupprimer;
     private String roleSelectionne;
     private boolean modeEdition = false;
+    
+    // Attribution de billets
+    private List<AttributionBillet> attributionsEmploye;
+    private AttributionBillet nouvelleAttribution;
+    private List<Evenement> mesEvenements;
+    private List<CategorieBillet> categoriesEvenement;
+    private Long idEvenementSelectionne;
+    private Long idCategorieSelectionnee;
     
     // Filtres - NETTOYAGE : Suppression des filtres Statut inutiles
     private String rechercheTexte;
@@ -416,6 +435,115 @@ public class UserOrgaController implements Serializable {
             preparerAjout();
         }
         return nouvelUtilisateur;
+    }
+    
+    /**
+     * Prépare le dialogue d'affectation de billets pour un employé
+     */
+    public void preparerAffectation(Personne p) {
+        if (!(p instanceof Employe)) {
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Seuls les employés peuvent recevoir des billets.', 'error');");
+            return;
+        }
+        
+        utilisateurSelectionne = p;
+        attributionsEmploye = attributionService.findByEmploye(p.getId());
+        
+        // Charger les événements de l'organisateur
+        Organisateur orga = (Organisateur) authController.getUtilisateurConnecte();
+        mesEvenements = evenementService.getEvenementsByOrganisateur(orga.getId());
+        
+        // Réinitialiser la nouvelle attribution
+        nouvelleAttribution = new AttributionBillet();
+        nouvelleAttribution.setEmploye((Employe) p);
+        idEvenementSelectionne = null;
+        idCategorieSelectionnee = null;
+        categoriesEvenement = new ArrayList<>();
+    }
+    
+    /**
+     * Mise à jour des catégories quand l'événement change
+     */
+    public void onEvenementChange() {
+        if (idEvenementSelectionne != null) {
+            Evenement ev = evenementService.trouverParId(idEvenementSelectionne);
+            if (ev != null) {
+                categoriesEvenement = ev.getCategoriesBillets();
+            }
+        } else {
+            categoriesEvenement = new ArrayList<>();
+        }
+    }
+    
+    /**
+     * Ajoute une nouvelle attribution de billets
+     */
+    public void ajouterAttribution() {
+        try {
+            if (idCategorieSelectionnee == null || nouvelleAttribution.getQuantiteAssignee() <= 0) {
+                org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Veuillez sélectionner une catégorie et une quantité valide.', 'error');");
+                return;
+            }
+            
+            // Trouver la catégorie
+            CategorieBillet cat = null;
+            for (CategorieBillet c : categoriesEvenement) {
+                if (c.getId().equals(idCategorieSelectionnee)) {
+                    cat = c;
+                    break;
+                }
+            }
+            
+            if (cat == null) return;
+            
+            // Vérifier le stock disponible
+            if (cat.getQuantiteDisponible() < nouvelleAttribution.getQuantiteAssignee()) {
+                org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Stock insuffisant', 'Il ne reste que " + cat.getQuantiteDisponible() + " billets disponibles.', 'warning');");
+                return;
+            }
+            
+            nouvelleAttribution.setCategorieBillet(cat);
+            attributionService.save(nouvelleAttribution);
+            
+            // Mettre à jour le stock de la catégorie (Réserver les billets)
+            cat.setQuantiteDisponible(cat.getQuantiteDisponible() - nouvelleAttribution.getQuantiteAssignee());
+            // JPA s'occupera de la mise à jour par cascade ou via evenementService
+            
+            // Recharger les attributions
+            attributionsEmploye = attributionService.findByEmploye(utilisateurSelectionne.getId());
+            
+            // Reset fields
+            idCategorieSelectionnee = null;
+            int qte = nouvelleAttribution.getQuantiteAssignee();
+            nouvelleAttribution = new AttributionBillet();
+            nouvelleAttribution.setEmploye((Employe) utilisateurSelectionne);
+            
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Succès', 'Quota de " + qte + " billets affecté.', 'success');");
+            
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'attribution: " + e.getMessage());
+            e.printStackTrace();
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Impossible d\\'affecter les billets.', 'error');");
+        }
+    }
+    
+    /**
+     * Supprime une attribution (rend les billets au stock global)
+     */
+    public void supprimerAttribution(AttributionBillet a) {
+        try {
+            // Rendre les billets non vendus au stock de la catégorie
+            CategorieBillet cat = a.getCategorieBillet();
+            cat.setQuantiteDisponible(cat.getQuantiteDisponible() + a.getReste());
+            
+            attributionService.supprimer(a.getId());
+            attributionsEmploye = attributionService.findByEmploye(utilisateurSelectionne.getId());
+            
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Supprimé', 'L\\'attribution a été retirée et les billets non vendus ont été rendus au stock.', 'success');");
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.primefaces.PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Impossible de supprimer l\\'attribution.', 'error');");
+        }
     }
     
     /**
