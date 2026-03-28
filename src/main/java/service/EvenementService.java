@@ -18,9 +18,13 @@ public class EvenementService {
 
     /**
      * Crée un nouvel événement et persiste ses catégories de billets.
+     * @throws IllegalArgumentException si un événement existe déjà à la même date et au même lieu.
      */
     public void creerEvenement(Evenement evenement) {
         System.out.println("Création de l'événement: " + evenement.getTitre());
+        if (evenementDao.existsAtDateAndLocation(evenement.getDateEvenement(), evenement.getLieu())) {
+            throw new IllegalArgumentException("Un événement existe déjà à cette date et dans ce lieu.");
+        }
         evenementDao.save(evenement);
     }
 
@@ -101,5 +105,20 @@ public class EvenementService {
      */
     public long countTotalClients(Long organisateurId) {
         return evenementDao.countUniqueClientsByOrganisateur(organisateurId);
+    }
+
+    /**
+     * Ajoute une catégorie de billet à un événement de manière transactionnelle.
+     */
+    public void ajouterCategorie(Long evenementId, entities.CategorieBillet categorie) {
+        Evenement ev = evenementDao.findById(evenementId);
+        if (ev != null) {
+            // Sécurité: Initialiser la quantité disponible si elle ne l'est pas
+            if (categorie.getQuantiteDisponible() == null || categorie.getQuantiteDisponible() == 0) {
+                categorie.setQuantiteDisponible(categorie.getQuantiteTotale());
+            }
+            ev.addCategorieBillet(categorie);
+            evenementDao.update(ev);
+        }
     }
 }

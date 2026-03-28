@@ -1,0 +1,275 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+    
+    <ui:define name="title">Tableau de Bord Employé</ui:define>
+    
+    <ui:define name="pageIcon">
+        <i class="pi pi-ticket"></i>
+    </ui:define>
+    
+    <ui:define name="pageTitle">
+        Mes Ventes &amp; Quotas
+    </ui:define>
+    
+    <ui:define name="content">
+        <style>
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+                margin-bottom: 35px;
+            }
+            
+            .stat-card {
+                background: white;
+                padding: 30px;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0, 71, 255, 0.05);
+                display: flex;
+                align-items: center;
+                gap: 25px;
+                border: 1px solid #f1f5f9;
+                transition: all 0.3s ease;
+            }
+            
+            .stat-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 35px rgba(0, 71, 255, 0.1);
+            }
+            
+            .stat-icon {
+                width: 65px;
+                height: 65px;
+                border-radius: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 30px;
+                color: white;
+            }
+            
+            .stat-icon.blue { background: linear-gradient(135deg, #0047FF 0%, #0039CC 100%); }
+            .stat-icon.green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+            .stat-icon.orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+            
+            .stat-value {
+                font-size: 32px;
+                font-weight: 800;
+                color: #0f172a;
+                line-height: 1;
+            }
+            
+            .stat-label {
+                font-size: 14px;
+                color: #64748b;
+                font-weight: 600;
+                margin-top: 5px;
+            }
+            
+            .ui-panel {
+                border-radius: 20px !important;
+                border: none !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+                background: white !important;
+                overflow: hidden;
+            }
+            
+            .ui-panel-titlebar {
+                background: #f8fafc !important;
+                border: none !important;
+                padding: 25px 30px !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+            }
+            
+            .ui-panel-title {
+                color: #0f172a !important;
+                font-weight: 700 !important;
+                font-size: 18px !important;
+            }
+            
+            .ui-datatable thead th {
+                background: #f8fafc !important;
+                color: #64748b !important;
+                text-transform: uppercase;
+                font-size: 12px !important;
+                letter-spacing: 1px;
+                padding: 20px !important;
+                border: none !important;
+                border-bottom: 2px solid #f1f5f9 !important;
+            }
+            
+            .ui-datatable tbody td {
+                padding: 20px !important;
+                border: none !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                font-size: 14.5px !important;
+            }
+            
+            .btn-sell {
+                background: linear-gradient(135deg, #0047FF 0%, #00D1FF 100%) !important;
+                border: none !important;
+                color: white !important;
+                padding: 10px 20px !important;
+                border-radius: 12px !important;
+                font-weight: 700 !important;
+                transition: all 0.3s ease !important;
+                box-shadow: 0 5px 15px rgba(0, 71, 255, 0.2) !important;
+            }
+            
+            .btn-sell:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 71, 255, 0.3) !important;
+            }
+            
+            .badge-category {
+                background: #f1f5f9;
+                color: #475569;
+                padding: 5px 12px;
+                border-radius: 8px;
+                font-weight: 700;
+                font-size: 12px;
+            }
+        </style>
+        
+        <!-- Statistiques de l'employé -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="pi pi-ticket"></i>
+                </div>
+                <div>
+                    <div class="stat-value">#{dashboardEmployeController.totalAssigne}</div>
+                    <div class="stat-label">Total Assigné</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="pi pi-shopping-cart"></i>
+                </div>
+                <div>
+                    <div class="stat-value">#{dashboardEmployeController.totalVendu}</div>
+                    <div class="stat-label">Billets Vendus</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="pi pi-percentage"></i>
+                </div>
+                <div>
+                    <div class="stat-value">#{dashboardEmployeController.totalRestant}</div>
+                    <div class="stat-label">Reste à Vendre</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liste des attributions -->
+        <p:panel header="Mes Événements Assignés">
+            <h:form id="attributionsForm">
+                <p:dataTable id="attributionsTable" value="#{dashboardEmployeController.myAttributions}" var="att"
+                             emptyMessage="Aucun événement ne vous est assigné pour le moment."
+                             rowKey="#{att.id}">
+                    
+                    <p:column headerText="Événement" style="width: 30%;">
+                        <div style="font-weight: 700; color: #0f172a;">#{att.categorieBillet.evenement.titre}</div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                            <i class="pi pi-map-marker" style="font-size: 10px; margin-right: 5px;"></i>
+                            #{att.categorieBillet.evenement.lieu}
+                        </div>
+                    </p:column>
+                    
+                    <p:column headerText="Catégorie" style="text-align: center;">
+                        <span class="badge-category">#{att.categorieBillet.nom}</span>
+                    </p:column>
+                    
+                    <p:column headerText="Quota" style="text-align: center; font-weight: 700;">
+                        #{att.quantiteAssignee}
+                    </p:column>
+                    
+                    <p:column headerText="Vendu" style="text-align: center; color: #10b981; font-weight: 700;">
+                        #{att.quantiteVendue}
+                    </p:column>
+                    
+                    <p:column headerText="Restant" style="text-align: center; color: #f59e0b; font-weight: 700;">
+                        #{att.reste}
+                    </p:column>
+                    
+                    <p:column headerText="Prix Unitaire" style="text-align: right;">
+                        <h:outputText value="#{att.categorieBillet.prix}">
+                            <f:convertNumber type="currency" currencySymbol="€" />
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Actions" style="width: 150px; text-align: center;">
+                        <p:commandButton value="Vendre" 
+                                         icon="pi pi-plus-circle"
+                                         styleClass="btn-sell"
+                                         oncomplete="PF('venteDialog').show()"
+                                         update=":venteDialogForm"
+                                         action="#{dashboardEmployeController.preparerVente(att)}"
+                                         disabled="#{att.reste le 0}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:panel>
+        
+        <!-- Dialogue de Vente -->
+        <p:dialog header="Enregistrer une Vente" widgetVar="venteDialog" modal="true" 
+                  responsive="true" width="450" showEffect="fade" hideEffect="fade"
+                  closeOnEscape="true">
+            <h:form id="venteDialogForm">
+                <div class="ui-fluid">
+                    <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 5px;">Événement</div>
+                        <div style="font-weight: 700; color: #0f172a;">#{dashboardEmployeController.selectedAttribution.categorieBillet.evenement.titre}</div>
+                        <div style="margin-top: 10px; display: flex; justify-content: space-between;">
+                            <div>
+                                <span style="font-size: 11px; color: #64748b;">Catégorie :</span>
+                                <span style="font-weight: 600; font-size: 13px;"> #{dashboardEmployeController.selectedAttribution.categorieBillet.nom}</span>
+                            </div>
+                            <div>
+                                <span style="font-size: 11px; color: #64748b;">Prix :</span>
+                                <span style="font-weight: 700; color: #0047FF;"> #{dashboardEmployeController.selectedAttribution.categorieBillet.prix} €</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field mb-3">
+                        <p:outputLabel for="email" value="Email du Client" style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;"/>
+                        <p:inputText id="email" value="#{dashboardEmployeController.clientEmail}" required="true">
+                            <p:ajax event="blur" listener="#{dashboardEmployeController.onEmailBlur()}" update="nom prenom" />
+                        </p:inputText>
+                        <small class="text-muted">Si le client existe déjà, ses informations seront chargées automatiquement.</small>
+                    </div>
+
+                    <div class="field mb-3">
+                        <p:outputLabel for="nom" value="Nom" style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;"/>
+                        <p:inputText id="nom" value="#{dashboardEmployeController.clientNom}" required="true"/>
+                    </div>
+
+                    <div class="field mb-4">
+                        <p:outputLabel for="prenom" value="Prénom" style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;"/>
+                        <p:inputText id="prenom" value="#{dashboardEmployeController.clientPrenom}" required="true"/>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <p:commandButton value="Annuler" onclick="PF('venteDialog').hide()" type="button" 
+                                         styleClass="ui-button-flat" style="color: #64748b !important; font-weight: 700 !important;"/>
+                        <p:commandButton value="Confirmer la Vente" 
+                                         action="#{dashboardEmployeController.effectuerVente()}" 
+                                         styleClass="btn-sell" 
+                                         update=":attributionsForm:attributionsTable :growl"
+                                         process="@form"/>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

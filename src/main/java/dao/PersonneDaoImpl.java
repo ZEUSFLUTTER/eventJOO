@@ -66,4 +66,16 @@ public class PersonneDaoImpl implements PersonneDao {
         query.setParameter("role", role);
         return query.getResultList();
     }
+
+    @Override
+    public Personne trouverParEmail(String email) {
+        try {
+            TypedQuery<Personne> query = em.createQuery(
+                "SELECT p FROM Personne p WHERE p.email = :email", Personne.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

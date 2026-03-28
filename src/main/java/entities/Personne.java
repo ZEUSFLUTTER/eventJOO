@@ -25,7 +25,9 @@ import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
@@ -35,6 +37,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "personne")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -78,6 +82,22 @@ public abstract class Personne implements Serializable {
         if (dateInscription == null) {
             dateInscription = new Date();
         }
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
     }
 
     public enum Role {

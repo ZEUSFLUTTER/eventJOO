@@ -18,4 +18,5 @@ public interface PersonneDao {
     boolean emailExiste(String email);
     java.util.List<Personne> findAll();
     java.util.List<Personne> findByRole(Personne.Role role);
+    Personne trouverParEmail(String email);
 }

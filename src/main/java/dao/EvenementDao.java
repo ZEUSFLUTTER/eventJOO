@@ -15,4 +15,5 @@ public interface EvenementDao {
     List<Evenement> findByOrganisateur(Long organisateurId);
     void update(Evenement evenement);
     long countUniqueClientsByOrganisateur(Long organisateurId);
+    boolean existsAtDateAndLocation(java.util.Date date, String lieu);
 }

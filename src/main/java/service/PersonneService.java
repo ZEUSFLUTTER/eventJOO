@@ -207,4 +207,16 @@ public class PersonneService {
         query.setParameter("orgId", organisateurId);
         return query.getResultList();
     }
+
+    /**
+     * Trouve une personne par son email
+     * @param email L'email à rechercher
+     * @return La personne trouvée ou null
+     */
+    public Personne trouverParEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return null;
+        }
+        return personneDao.trouverParEmail(email);
+    }
 }

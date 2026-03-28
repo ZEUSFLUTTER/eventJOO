@@ -1,157 +1,292 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="jakarta.faces.html"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:f="jakarta.faces.core"
-                xmlns:ui="jakarta.faces.facelets"
-                template="/WEB-INF/public_template.xhtml">
-    
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:p="http://primefaces.org/ui"
+    xmlns:f="jakarta.faces.core" xmlns:ui="jakarta.faces.facelets" template="/WEB-INF/public_template.xhtml">
+
     <ui:define name="title">EventPlatform - Plongez dans l'Expérience</ui:define>
-    
+
     <ui:define name="content">
         <style>
             /* <![CDATA[ */
-            /* OVERRIDE PUBLIC TEMPLATE FOR PREMIUM INDEX */
-            
-            /* Typography and Colors */
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap');
+
             :root {
-                --brand-primary: #FF3366;
-                --brand-secondary: #FF9933;
-                --brand-dark: #0f172a;
-                --glass-bg: rgba(255, 255, 255, 0.1);
-                --glass-border: rgba(255, 255, 255, 0.2);
+                --brand-primary: #7c3aed;
+                /* Vibrant Purple */
+                --brand-secondary: #d946ef;
+                /* Bright Pink */
+                --brand-accent: #38bdf8;
+                /* Cyber Blue */
+                --bg-main: #020617;
+                /* Deepest Indigo/Black */
+                --bg-card: rgba(15, 23, 42, 0.6);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --text-muted: #94a3b8;
             }
 
             body {
-                background-color: #f8fafc !important;
-                font-family: 'Inter', 'Segoe UI', sans-serif !important;
+                background-color: var(--bg-main) !important;
+                font-family: 'Outfit', sans-serif !important;
+                color: white !important;
+                overflow-x: hidden;
             }
 
-            /* Stunning Hero Section */
-            .hero-section {
-                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%) !important;
-                padding: 120px 0 160px 0 !important;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .hero-section::before {
-                content: '';
+            /* Galaxy Background Elements */
+            .galaxy-orb {
                 position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: radial-gradient(circle, rgba(255,51,102,0.15) 0%, rgba(0,0,0,0) 50%);
+                border-radius: 50%;
+                filter: blur(80px);
+                z-index: 0;
+                opacity: 0.4;
+            }
+
+            .orb-1 {
+                width: 400px;
+                height: 400px;
+                background: var(--brand-primary);
+                top: -100px;
+                right: -100px;
+            }
+
+            .orb-2 {
+                width: 300px;
+                height: 300px;
+                background: var(--brand-accent);
+                bottom: -100px;
+                left: -100px;
+            }
+
+            /* Premium Hero NFT Style */
+            .hero-section {
+                background: transparent !important;
+                padding: 100px 0 120px 0 !important;
+                position: relative;
                 z-index: 1;
             }
 
             .hero-title {
-                font-size: 4rem !important;
-                font-weight: 800 !important;
-                background: linear-gradient(to right, #ffffff, #e2e8f0);
+                font-size: 4.5rem !important;
+                font-weight: 900 !important;
+                line-height: 1.1 !important;
+                background: linear-gradient(to bottom right, #fff 30%, #94a3b8 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
-                margin-bottom: 1.5rem !important;
-                letter-spacing: -1px;
+                margin-bottom: 2rem !important;
+                letter-spacing: -2px;
             }
 
             .hero-subtitle {
-                font-size: 1.25rem !important;
-                color: #94a3b8 !important;
-                font-weight: 400;
-                margin-bottom: 3.5rem !important;
-            }
-
-            /* Glassmorphism Search Bar */
-            .search-container {
-                position: relative;
-                z-index: 3;
-                max-width: 800px !important;
-                margin: 0 auto;
-            }
-
-            .search-form {
-                background: var(--glass-bg) !important;
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid var(--glass-border) !important;
-                border-radius: 20px !important;
-                padding: 10px;
-                display: flex;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-            }
-
-            .search-input {
-                flex: 1;
-                background: transparent !important;
-                color: white !important;
-                border: none !important;
-                padding: 15px 25px !important;
                 font-size: 1.1rem !important;
+                color: var(--text-muted) !important;
+                max-width: 500px;
+                margin-bottom: 3rem !important;
+                line-height: 1.6;
             }
 
-            .search-input::placeholder {
-                color: rgba(255, 255, 255, 0.6) !important;
+            /* Stats Group */
+            .stats-container {
+                display: flex;
+                gap: 40px;
+                margin-top: 40px;
             }
 
-            .search-btn {
+            .stat-item h4 {
+                font-size: 1.8rem;
+                font-weight: 800;
+                margin: 0;
+                color: white;
+            }
+
+            .stat-item p {
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                margin: 0;
+            }
+
+            /* NFT Artwork Container */
+            .hero-artwork-wrapper {
+                position: relative;
+                padding: 20px;
+            }
+
+            .hero-artwork-card {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: 30px;
+                padding: 15px;
+                box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+                transform: perspective(1000px) rotateY(-5deg);
+                transition: transform 0.5s;
+            }
+
+            .hero-artwork-card:hover {
+                transform: perspective(1000px) rotateY(0deg);
+            }
+
+            .hero-artwork-img {
+                width: 100%;
+                border-radius: 20px;
+                display: block;
+            }
+
+            /* Sponsor Bar */
+            .sponsor-bar {
+                padding: 40px 0;
+                border-top: 1px solid var(--glass-border);
+                border-bottom: 1px solid var(--glass-border);
+                margin: 40px 0;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                opacity: 0.5;
+                font-weight: 900;
+                font-size: 1.2rem;
+                letter-spacing: 2px;
+                color: #94a3b8;
+            }
+
+            /* Glassmorphism Event Cards */
+            .section-label {
+                color: var(--brand-accent);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+                display: block;
+            }
+
+            .section-title {
+                font-size: 3rem !important;
+                font-weight: 800 !important;
+                color: white !important;
+                margin-bottom: 4rem !important;
+            }
+
+            .event-card {
+                background: var(--bg-card) !important;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid var(--glass-border) !important;
+                border-radius: 24px !important;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+                overflow: hidden;
+                margin-bottom: 30px;
+                height: auto !important;
+            }
+
+            .event-card:hover {
+                transform: translateY(-15px) !important;
+                border-color: var(--brand-primary) !important;
+                box-shadow: 0 20px 40px rgba(124, 58, 237, 0.2) !important;
+            }
+
+            .event-img-container {
+                position: relative;
+                padding: 12px;
+            }
+
+            .event-img {
+                width: 100%;
+                height: 240px !important;
+                object-fit: cover !important;
+                border-radius: 18px !important;
+            }
+
+            .event-badge {
+                position: absolute;
+                top: 25px;
+                left: 25px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(8px);
+                padding: 6px 15px;
+                border-radius: 100px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .event-content {
+                padding: 0 24px 24px 24px !important;
+            }
+
+            .event-title {
+                font-size: 1.4rem !important;
+                font-weight: 800 !important;
+                color: white !important;
+                margin-bottom: 15px !important;
+                line-height: 1.2;
+            }
+
+            .event-info-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 20px;
+                border-top: 1px solid var(--glass-border);
+            }
+
+            .price-tag {
+                color: var(--brand-accent);
+                font-weight: 800;
+                font-size: 1.1rem;
+            }
+
+            .btn-reserve {
                 background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary)) !important;
                 border: none !important;
                 border-radius: 12px !important;
+                padding: 10px 25px !important;
                 color: white !important;
-                padding: 15px 40px !important;
                 font-weight: 700 !important;
-                font-size: 1.1rem !important;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                box-shadow: 0 10px 15px -3px rgba(255, 51, 102, 0.3) !important;
-                transition: transform 0.3s, box-shadow 0.3s !important;
+                font-size: 0.9rem !important;
+                transition: transform 0.2s !important;
             }
 
-            .search-btn:hover {
-                transform: translateY(-3px) !important;
-                box-shadow: 0 20px 25px -5px rgba(255, 51, 102, 0.4) !important;
+            .btn-reserve:hover {
+                transform: scale(1.05) !important;
             }
 
-            /* Section Title */
-            .section-title {
-                font-size: 2.5rem !important;
-                font-weight: 800 !important;
-                color: var(--brand-dark) !important;
-                margin-bottom: 3rem !important;
-                position: relative;
-                display: inline-block;
-            }
-            .section-title::after {
-                content: '';
-                position: absolute;
-                bottom: -10px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 60px;
-                height: 4px;
-                background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary));
-                border-radius: 2px;
+            /* Purchase Dialog Dark Theme */
+            #purchaseDialog {
+                background: var(--bg-main) !important;
+                border: 1px solid var(--glass-border) !important;
             }
 
-            /* Event Cards Premium */
-            .event-card {
-                background: white !important;
-                border-radius: 20px !important;
+            .ui-dialog-titlebar {
+                background: transparent !important;
+                color: white !important;
                 border: none !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
-                transition: transform 0.4s ease, box-shadow 0.4s ease !important;
-                display: flex;
-                flex-direction: column;
-                height: 100%;
-                overflow: hidden;
+            }
+
+            .ui-dialog-content {
+                background: transparent !important;
+                color: white !important;
+            }
+
+            /* Custom Toggles */
+            .filter-tab {
+                background: rgba(255, 255, 255, 0.05) !important;
+                border: 1px solid var(--glass-border) !important;
+                padding: 10px 25px !important;
+                border-radius: 100px !important;
+                color: var(--text-muted) !important;
+                font-weight: 600 !important;
+                transition: all 0.3s !important;
+            }
+
+            .filter-tab.active {
+                background: var(--brand-primary) !important;
+                color: white !important;
+                border-color: var(--brand-primary) !important;
+                box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3) !important;
             }
 
             .event-card:hover {
                 transform: translateY(-10px) !important;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
             }
 
             .event-image {
@@ -163,18 +298,21 @@
                 justify-content: center;
                 overflow: hidden;
             }
-            
+
             /* Dynamic Image Background Patterns based on category */
             .event-image::before {
                 content: '';
                 position: absolute;
-                top: 0; left: 0; right: 0; bottom: 0;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
                 background-size: cover;
                 background-position: center;
                 opacity: 0.8;
                 transition: transform 0.5s ease;
             }
-            
+
             .event-card:hover .event-image::before {
                 transform: scale(1.05);
             }
@@ -183,7 +321,7 @@
                 font-size: 4rem !important;
                 color: white !important;
                 z-index: 2;
-                text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             }
 
             .event-date-badge {
@@ -191,12 +329,12 @@
                 top: 15px !important;
                 left: 15px !important;
                 right: auto !important;
-                background: rgba(255,255,255,0.95) !important;
+                background: rgba(255, 255, 255, 0.95) !important;
                 color: var(--brand-primary) !important;
                 backdrop-filter: blur(5px);
                 padding: 10px 15px !important;
                 border-radius: 12px !important;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -208,11 +346,13 @@
                 display: block;
                 line-height: 1.1;
             }
+
             .event-date-badge span:first-child {
                 font-size: 1.2rem;
                 font-weight: 800;
                 color: var(--brand-dark);
             }
+
             .event-date-badge span:last-child {
                 font-size: 0.8rem;
                 font-weight: 700;
@@ -259,7 +399,7 @@
                 align-items: center;
                 gap: 5px;
             }
-            
+
             .event-location i {
                 color: var(--brand-primary);
             }
@@ -304,10 +444,11 @@
             .cta-section::after {
                 content: '';
                 position: absolute;
-                top: 0; right: 0;
+                top: 0;
+                right: 0;
                 width: 300px;
                 height: 300px;
-                background: radial-gradient(circle, rgba(255,153,51,0.2) 0%, rgba(0,0,0,0) 70%);
+                background: radial-gradient(circle, rgba(255, 153, 51, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
                 border-radius: 50%;
                 transform: translate(30%, -30%);
             }
@@ -359,96 +500,313 @@
             .custom-shape-divider-bottom .shape-fill {
                 fill: #f8fafc;
             }
+
+            /* Premium Tickets */
+            .ticket-card {
+                display: flex;
+                height: 160px;
+                border-radius: 16px;
+                overflow: hidden;
+                margin-bottom: 20px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(0, 0, 0, 0.05);
+                transition: transform 0.3s;
+                background: white;
+            }
+
+            .ticket-card:hover {
+                transform: scale(1.02);
+            }
+
+            .ticket-left {
+                flex: 1;
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                position: relative;
+                color: white;
+                background-size: cover !important;
+                background-position: center !important;
+            }
+
+            .ticket-left::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 100%);
+                z-index: 1;
+            }
+
+            .ticket-event-name {
+                font-size: 1.6rem;
+                font-weight: 900;
+                z-index: 2;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #fff;
+                margin: 0;
+            }
+
+            .ticket-details {
+                font-size: 0.9rem;
+                z-index: 2;
+                opacity: 0.95;
+                display: flex;
+                gap: 15px;
+                margin-top: 10px;
+            }
+
+            .ticket-details i {
+                margin-right: 5px;
+                color: var(--brand-secondary);
+            }
+
+            .ticket-right {
+                width: 220px;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                border-left: 3px dashed #cbd5e1;
+                padding: 15px;
+                text-align: center;
+                position: relative;
+            }
+
+            /* Punched holes effect */
+            .ticket-right::before,
+            .ticket-right::after {
+                content: '';
+                position: absolute;
+                left: -12px;
+                width: 24px;
+                height: 24px;
+                background: #fff;
+                /* Match dialog bg */
+                border-radius: 50%;
+                z-index: 3;
+            }
+
+            .ticket-right::before {
+                top: -12px;
+            }
+
+            .ticket-right::after {
+                bottom: -12px;
+            }
+
+            .ticket-cat-name {
+                font-size: 1.4rem;
+                font-weight: 900;
+                color: #0f172a;
+                text-transform: uppercase;
+                line-height: 1;
+            }
+
+            .ticket-price {
+                font-size: 1.8rem;
+                font-weight: 950;
+                color: var(--brand-primary);
+                margin: 10px 0;
+            }
+
+            .ticket-stock {
+                font-size: 0.8rem;
+                color: #64748b;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .btn-buy-ticket {
+                background: var(--brand-dark) !important;
+                border: none !important;
+                border-radius: 8px !important;
+                color: white !important;
+                padding: 8px 20px !important;
+                font-weight: 700 !important;
+                width: 100% !important;
+                margin-top: 15px !important;
+            }
+
+            /* Variants Gradients */
+            .ticket-regular .ticket-left {
+                background: linear-gradient(135deg, #334155 0%, #0f172a 100%);
+                border-left: 8px solid #94a3b8;
+            }
+
+            .ticket-vip .ticket-left {
+                background: linear-gradient(135deg, #b45309 0%, #78350f 100%);
+                border-left: 8px solid #fbbf24;
+            }
+
+            .ticket-premium .ticket-left {
+                background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+                border-left: 8px solid #fbbf24;
+            }
+
+            .ticket-buga .ticket-left {
+                background: linear-gradient(135deg, #4c1d95 0%, #2e1065 100%);
+                border-left: 8px solid #d946ef;
+            }
+
+            .ticket-vip .ticket-cat-name,
+            .ticket-premium .ticket-cat-name {
+                color: #b45309;
+            }
+
+            .ticket-buga .ticket-cat-name {
+                color: #7c3aed;
+            }
+
             /* ]]> */
         </style>
 
-        <!-- Premium Hero Section -->
+        <!-- Galaxy Background Orbs -->
+        <div class="galaxy-orb orb-1"></div>
+        <div class="galaxy-orb orb-2"></div>
+
         <section class="hero-section">
-            <div class="container" style="position: relative; z-index: 2;">
-                <h1 class="hero-title">Vivez des <span style="background: linear-gradient(to right, #FF3366, #FF9933); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">émotions</span> uniques</h1>
-                <p class="hero-subtitle">La plateforme n°1 pour découvrir et réserver vos prochains événements incontournables.</p>
-                
-                <!-- Barre de recherche Glassmorphism -->
-                <div class="search-container">
-                    <h:form>
-                        <div class="search-form">
-                            <i class="pi pi-search" style="color: rgba(255,255,255,0.6); font-size: 1.5rem; padding: 15px 0 15px 20px;"></i>
-                            <p:inputText 
-                                value="#{indexController.rechercheTexte}"
-                                placeholder="Concerts, festivals, conférences..."
-                                styleClass="search-input"/>
-                            <p:commandButton 
-                                value="Explorer"
-                                action="#{indexController.rechercher()}"
-                                styleClass="search-btn"
-                                update="@form"
-                                process="@form"/>
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <span class="section-label">Digital Ticketing Evolution</span>
+                        <h1 class="hero-title">Discover, Collect and Sell Dope Events</h1>
+                        <p class="hero-subtitle">
+                            The world's largest digital marketplace for exclusive events, concert tickets and premium
+                            experiences.
+                        </p>
+
+                        <h:form>
+                            <div class="d-flex gap-3 mb-5">
+                                <p:commandButton value="Discover" styleClass="btn-reserve"
+                                    style="padding: 15px 40px !important; font-size: 1.1rem !important;" />
+                                <p:commandButton value="Create" type="button" styleClass="filter-tab"
+                                    style="padding: 15px 40px !important; font-size: 1.1rem !important;" />
+                            </div>
+                        </h:form>
+
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h4>27k+</h4>
+                                <p>Events</p>
+                            </div>
+                            <div class="stat-item">
+                                <h4>20k+</h4>
+                                <p>Organizers</p>
+                            </div>
+                            <div class="stat-item">
+                                <h4>7k+</h4>
+                                <p>Artists</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 mt-5 mt-lg-0">
+                        <div class="hero-artwork-wrapper">
+                            <div class="hero-artwork-card" style="position: relative; z-index: 10;">
+                                <h:graphicImage value="#{resource['images:hero_nft.png']}"
+                                    styleClass="hero-artwork-img" />
+                                <div class="mt-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 1.1rem; color: #fff;">Cyber Sphere #01
+                                        </div>
+                                        <div style="color: var(--text-muted); font-size: 0.8rem;">by GLSI-Events</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div style="color: var(--brand-accent); font-weight: 800; font-size: 0.9rem;">
+                                            LIVE ART</div>
+                                        <div style="font-size: 0.7rem; color: var(--text-muted);">Ending in: 1h 30m
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="sponsor-bar">
+                <span>PAYPAL</span>
+                <span>COINBASE</span>
+                <span>BINANCE</span>
+                <span>REVOLUT</span>
+                <span>EXODUS</span>
+                <span>BITFINEX</span>
+            </div>
+
+            <section style="padding: 80px 0;">
+                <div class="d-flex justify-content-between align-items-end mb-5">
+                    <div>
+                        <span class="section-label">Exclusive Picks</span>
+                        <h2 class="section-title">Popular this week</h2>
+                    </div>
+                    <!-- Filters -->
+                    <h:form id="filterForm">
+                        <div class="d-flex gap-3 mb-4 overflow-auto pb-2">
+                            <p:commandLink value="All Events" action="#{indexController.afficherTousLesEvenements()}"
+                                update=":eventList"
+                                styleClass="filter-tab #{indexController.filtreTous ? 'active' : ''}" />
+
+                            <ui:fragment rendered="#{indexController.organisateurConnecte}">
+                                <p:commandLink value="My Created Events"
+                                    action="#{indexController.afficherMesEvenements()}" update=":eventList"
+                                    styleClass="filter-tab #{indexController.filtreMes ? 'active' : ''}" />
+                            </ui:fragment>
+
+                            <p:commandLink value="Concerts" styleClass="filter-tab" />
+                            <p:commandLink value="Technology" styleClass="filter-tab" />
                         </div>
                     </h:form>
                 </div>
-            </div>
-            <!-- Wave -->
-            <div class="custom-shape-divider-bottom">
-                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-                </svg>
-            </div>
-        </section>
-        
-        <section class="main-content" style="padding-top: 4rem;">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-title">#{indexController.filtreMes ? 'Mes événements en ligne' : 'Événements en ligne'}</h2>
-                    <h:form id="homeFilterForm" style="margin-bottom: 2rem;">
-                        <p:commandButton
-                            value="Tous les événements"
-                            action="#{indexController.afficherTousLesEvenements()}"
-                            process="@this"
-                            update=":eventsPanel :homeFilterForm"
-                            styleClass="btn-event"
-                            disabled="#{indexController.filtreTous}" />
-                        <p:commandButton
-                            value="Mes événements"
-                            action="#{indexController.afficherMesEvenements()}"
-                            process="@this"
-                            update=":eventsPanel :homeFilterForm"
-                            styleClass="btn-event"
-                            style="margin-left: .75rem;"
-                            rendered="#{indexController.organisateurConnecte}"
-                            disabled="#{indexController.filtreMes}" />
-                    </h:form>
-                </div>
-                <h:panelGroup id="eventsPanel" layout="block">
-                    <div class="row g-5">
+
+                <h:panelGroup id="eventList">
+                    <div class="row">
                         <ui:repeat value="#{indexController.evenements}" var="event">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="card event-card">
-                                    <div class="event-image">
-                                        <div class="event-date-badge">
-                                            <h:outputText value="#{event.date}" escape="false"/>
+                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                                <div class="event-card">
+                                    <div class="event-img-container">
+                                        <div class="event-badge">
+                                            <i class="#{event.icone} me-1"></i>
+                                            #{event.realEvenement.type}
                                         </div>
-                                        <i class="#{event.icone}"></i>
-                                        <div class="event-price-tag">#{event.prix == 'Gratuit' ? 'Entrée Libre' : event.prix}</div>
-                                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(255,51,102,0.8) 0%, rgba(255,153,51,0.8) 100%); mix-blend-mode: overlay;"></div>
+                                        <!-- Mock Image based on type with robust local images -->
+                                        <!-- Mock Image based on type with robust local images -->
+                                        <ui:fragment rendered="#{not empty event.realEvenement.type}">
+                                            <h:graphicImage value="#{resource[event.realEvenement.type.toString().trim().toUpperCase() == 'CONCERT' ? 'images:concert.jpg' : (event.realEvenement.type.toString().trim().toUpperCase() == 'SPORT' ? 'images:sport.jpg' : (event.realEvenement.type.toString().trim().toUpperCase() == 'CONFERENCE' ? 'images:conference.jpg' : 'images:hero_nft.png'))]}" 
+                                                           styleClass="event-img" />
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{empty event.realEvenement.type}">
+                                            <h:graphicImage value="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&amp;fit=crop&amp;w=800&amp;q=80" 
+                                                           styleClass="event-img" />
+                                        </ui:fragment>
                                     </div>
-                                    <div class="event-body">
-                                        <h5 class="event-title">#{event.titre}</h5>
-                                        <div class="event-location">
-                                            <i class="pi pi-map-marker"></i>
-                                            <span>#{event.lieu}</span>
+                                    <div class="event-content">
+                                        <h3 class="event-title">#{event.titre}</h3>
+                                        <div
+                                            style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                                            <div
+                                                style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(45deg, var(--brand-primary), var(--brand-accent)); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #fff;">
+                                                #{event.realEvenement.organisateur.nom.substring(0,1)}
+                                            </div>
+                                            <span style="color: var(--text-muted); font-size: 0.85rem;">by
+                                                #{event.realEvenement.organisateur.nom}</span>
                                         </div>
-                                        <p class="event-description">#{event.description}</p>
-                                        <div class="mt-auto">
+
+                                        <div class="event-info-footer">
+                                            <div class="price-tag">#{event.prix}</div>
                                             <h:form>
-                                                <p:commandButton
-                                                    value="Réserver ma place"
-                                                    styleClass="btn-event"
-                                                    icon="pi pi-bookmark"
-                                                    iconPos="right"
-                                                    oncomplete="PF('purchaseDialog').show()"
-                                                    update=":purchaseDialogForm"
+                                                <p:commandButton value="Reserve" styleClass="btn-reserve"
+                                                    oncomplete="PF('purchaseDialog').show()" update=":purchaseDialog"
                                                     process="@this">
-                                                    <f:setPropertyActionListener value="#{event}" target="#{indexController.selectedEvent}" />
+                                                    <f:setPropertyActionListener value="#{event}"
+                                                        target="#{indexController.selectedEvent}" />
                                                 </p:commandButton>
                                             </h:form>
                                         </div>
@@ -458,55 +816,77 @@
                         </ui:repeat>
                     </div>
                     <ui:fragment rendered="#{empty indexController.evenements}">
-                        <div class="text-center" style="padding: 2rem 0 3rem 0; color: #64748b; font-weight: 600;">
-                            Aucun événement publié pour le moment.
+                        <div class="text-center py-5" style="color: var(--text-muted);">
+                            <i class="pi pi-search" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.2;"></i>
+                            <p>No events found for this category.</p>
                         </div>
                     </ui:fragment>
                 </h:panelGroup>
-                <div class="cta-section">
-                    <div class="row align-items-center">
-                        <div class="col-lg-8 text-lg-start text-center">
-                            <h3 class="cta-title">Vous êtes organisateur ?</h3>
-                            <p class="cta-subtitle">
-                                Créez, gérez et boostez vos événements avec notre plateforme intuitive. Vendez vos billets en moins de 5 minutes.
-                            </p>
-                        </div>
-                        <div class="col-lg-4 text-center text-lg-end">
-                            <h:form>
-                                <h:link outcome="login" styleClass="btn-cta">
-                                    Créer mon événement
-                                    <i class="pi pi-arrow-right" style="margin-left: 8px;"></i>
-                                </h:link>
-                            </h:form>
-                        </div>
-                    </div>
+
+                <!-- New NFT-Style CTA -->
+                <div
+                    style="margin-top: 100px; background: linear-gradient(to right, #1e1b4b, #312e81); border-radius: 40px; padding: 60px; text-align: center; border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+                    <div class="galaxy-orb orb-1" style="width: 200px; height: 200px; top: -50px; left: -50px;"></div>
+                    <h2
+                        style="font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; position: relative; z-index: 1;">
+                        Join Us to Create and Sell Your Events</h2>
+                    <p
+                        style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px; position: relative; z-index: 1;">
+                        Become a part of the most exclusive event community in the world.</p>
+                    <h:link outcome="login" styleClass="btn-reserve"
+                        style="padding: 18px 45px !important; font-size: 1.1rem !important; text-decoration: none; display: inline-block;">
+                        Join Community
+                    </h:link>
                 </div>
-            </div>
-        </section>
-        
+            </section>
+        </div>
+
         <p:dialog id="purchaseDialog" widgetVar="purchaseDialog" modal="true" responsive="true"
-                  header="Réserver votre place" showEffect="fade" hideEffect="fade" width="500">
+            header="Reserve Your Spot" showEffect="fade" hideEffect="fade" width="850"
+            style="border: 1px solid var(--glass-border) !important; box-shadow: 0 40px 80px rgba(0,0,0,0.8) !important; border-radius: 30px !important;">
             <h:form id="purchaseDialogForm">
-                <div class="p-4">
-                    <h3 class="font-bold text-xl mb-4">#{indexController.selectedEvent.titre}</h3>
-                    <p class="text-gray-600 mb-6">Choisissez votre catégorie de billet :</p>
+                <div
+                    style="padding: 30px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border-radius: 25px;">
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="font-weight: 900; color: white; margin: 0; font-size: 2rem;">
+                            #{indexController.selectedEvent.titre}</h2>
+                        <p style="color: var(--text-muted); margin: 10px 0 0 0; font-size: 1.1rem;">Choose your premium
+                            ticket category</p>
+                    </div>
+
                     <ui:repeat value="#{indexController.selectedEvent.realEvenement.categoriesBillets}" var="cat">
-                        <div class="flex items-center justify-between p-4 mb-3 border rounded-xl hover:bg-slate-50 transition-colors">
-                            <div style="flex: 1;">
-                                <div class="font-bold text-lg">#{cat.nom}</div>
-                                <div class="text-sm text-gray-500">#{cat.quantiteDisponible} places restantes</div>
-                            </div>
-                            <div class="flex items-center gap-4" style="display: flex; align-items: center; gap: 1rem;">
-                                <div class="font-black" style="color: var(--brand-primary); font-weight: 900;">
-                                    <h:outputText value="#{cat.prix}">
-                                        <f:convertNumber type="currency" currencySymbol="€" />
-                                    </h:outputText>
+                        <div class="ticket-card #{cat.nom.toLowerCase().contains('vip') ? 'ticket-vip' : (cat.nom.toLowerCase().contains('premium') ? 'ticket-premium' : (cat.nom.toLowerCase().contains('buga') ? 'ticket-buga' : 'ticket-regular'))}"
+                            style="background: rgba(255,255,255,0.03) !important; border: 1px solid var(--glass-border) !important; backdrop-filter: blur(10px);">
+                            <div class="ticket-left">
+                                <div>
+                                    <h3 class="ticket-event-name">#{indexController.selectedEvent.titre}</h3>
+                                    <div class="ticket-details">
+                                        <span><i class="pi pi-calendar"></i>
+                                            #{indexController.selectedEvent.dateFormatted}</span>
+                                        <span><i class="pi pi-map-marker"></i>
+                                            #{indexController.selectedEvent.lieu}</span>
+                                    </div>
                                 </div>
-                                <p:commandButton value="Acheter"
-                                                 action="#{billetController.acheterBillet(cat)}"
-                                                 disabled="#{cat.quantiteDisponible le 0}"
-                                                 styleClass="ui-button-raised ui-button-help"
-                                                 update=":growl"/>
+                                <div
+                                    style="z-index: 2; font-size: 0.75rem; font-weight: 800; background: rgba(255,255,255,0.1); padding: 6px 15px; border-radius: 100px; display: inline-block; border: 1px solid rgba(255,255,255,0.1); color: var(--brand-accent);">
+                                    EXCLUSIVE ACCESS
+                                </div>
+                            </div>
+                            <div class="ticket-right"
+                                style="background: rgba(15, 23, 42, 0.5) !important; border-left: 2px dashed rgba(255,255,255,0.1) !important;">
+                                <div class="ticket-cat-name" style="color: white !important;">#{cat.nom}</div>
+                                <div class="ticket-price" style="color: var(--brand-secondary) !important;">
+                                    <h:outputText value="#{cat.prix}">
+                                        <f:convertNumber pattern="#,##0" />
+                                    </h:outputText>
+                                    <span style="font-size: 1rem; font-weight: 800; margin-left: 4px;">CFA</span>
+                                </div>
+                                <div class="ticket-stock" style="color: var(--text-muted) !important;">
+                                    #{cat.quantiteDisponible} REMAINING</div>
+
+                                <p:commandButton value="SECURE TICKET" action="#{billetController.acheterBillet(cat)}"
+                                    disabled="#{cat.quantiteDisponible le 0}" styleClass="btn-reserve"
+                                    style="width: 100% !important; margin-top: 15px !important;" update=":growl" />
                             </div>
                         </div>
                     </ui:repeat>

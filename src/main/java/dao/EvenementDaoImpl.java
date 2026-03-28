@@ -82,4 +82,15 @@ public class EvenementDaoImpl implements EvenementDao {
             .setParameter("orgId", organisateurId)
             .getSingleResult();
     }
+
+    @Override
+    public boolean existsAtDateAndLocation(java.util.Date date, String lieu) {
+        Long count = em.createQuery(
+            "SELECT COUNT(e) FROM Evenement e WHERE e.dateEvenement = :date AND LOWER(TRIM(e.lieu)) = LOWER(TRIM(:lieu))", 
+            Long.class)
+            .setParameter("date", date)
+            .setParameter("lieu", lieu)
+            .getSingleResult();
+        return count > 0;
+    }
 }

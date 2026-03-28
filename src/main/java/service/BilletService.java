@@ -8,6 +8,7 @@ import dao.BilletDao;
 import entities.Billet;
 import entities.CategorieBillet;
 import entities.Client;
+import entities.Employe;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -60,6 +61,37 @@ public class BilletService {
 
     public List<Billet> getBilletsByClient(Long clientId) {
         return billetDao.findByClient(clientId);
+    }
+
+    /**
+     * Permet à un employé de vendre un billet à un client (souvent en physique).
+     */
+    public Billet vendreBilletParEmploye(Employe employe, CategorieBillet categorie, Client client) {
+        // Validation basique
+        if (categorie.getQuantiteDisponible() <= 0) {
+            throw new IllegalStateException("Plus de billets disponibles dans cette catégorie.");
+        }
+
+        // Créer le billet
+        Billet billet = new Billet();
+        billet.setClient(client);
+        billet.setCategorieBillet(categorie);
+        billet.setVendeur(employe);
+        billet.setStatut("Valide");
+        billet.setDateAchat(new java.util.Date());
+
+        // Générer QR Code
+        String uniqueId = "EMP-SALE-" + java.util.UUID.randomUUID().toString();
+        billet.setCodeQR(generateQRCodeBase64(uniqueId));
+
+        // Décrémenter le stock GLOBAL de la catégorie
+        categorie.setQuantiteDisponible(categorie.getQuantiteDisponible() - 1);
+        em.merge(categorie);
+
+        // Sauvegarder
+        billetDao.save(billet);
+
+        return billet;
     }
 
     /**

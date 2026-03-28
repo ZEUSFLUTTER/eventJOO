@@ -144,7 +144,7 @@ public class IndexController implements Serializable {
 
     private String determineIcon(entities.Evenement e) {
         String titre = e.getTitre().toLowerCase();
-        if (titre.contains("concert") || titre.contains("music") || titre.contains("jazz")) return "pi pi-music";
+        if (titre.contains("concert") || titre.contains("music") || titre.contains("jazz") || titre.contains("himra")) return "pi pi-music";
         if (titre.contains("tech") || titre.contains("conf") || titre.contains("innovation")) return "pi pi-desktop";
         if (titre.contains("sport") || titre.contains("marathon") || titre.contains("course")) return "pi pi-flag";
         if (titre.contains("livre") || titre.contains("salon")) return "pi pi-book";
@@ -182,6 +182,7 @@ public class IndexController implements Serializable {
         private String prix;
         private String description;
         private String date;
+        private String dateFormatted;
         private String icone;
         private entities.Evenement realEvenement;
         
@@ -191,9 +192,19 @@ public class IndexController implements Serializable {
             this.prix = prix;
             this.description = description;
             this.date = date;
+            this.dateFormatted = date != null ? date.replace("\n", " ") : "";
             this.icone = icone;
             this.realEvenement = realEvenement;
         }
+
+        public String getTitre() { return titre; }
+        public String getLieu() { return lieu; }
+        public String getPrix() { return prix; }
+        public String getDescription() { return description; }
+        public String getDate() { return date; }
+        public String getDateFormatted() { return dateFormatted; }
+        public String getIcone() { return icone; }
+        public entities.Evenement getRealEvenement() { return realEvenement; }
     }
     public Evenement getSelectedEvent() { return selectedEvent; }
     public void setSelectedEvent(Evenement selectedEvent) { this.selectedEvent = selectedEvent; }

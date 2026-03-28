@@ -67,6 +67,15 @@ public class OrgaBilletController implements Serializable {
     public void enregistrerModification() {
         try {
             if (categorieSelectionnee != null) {
+                // Charger la version actuelle depis la DB pour connaître l'ancien stock
+                CategorieBillet old = categorieBilletDao.findById(categorieSelectionnee.getId());
+                if (old != null) {
+                    int vendus = old.getQuantiteTotale() - old.getQuantiteDisponible();
+                    int nouveauTotal = categorieSelectionnee.getQuantiteTotale();
+                    // Nouvelle dispo = Nouveau Total - Déjà vendus
+                    categorieSelectionnee.setQuantiteDisponible(Math.max(0, nouveauTotal - vendus));
+                }
+                
                 categorieBilletDao.update(categorieSelectionnee);
                 PrimeFaces.current().executeScript("Swal.fire('Succès', 'Le billet a été mis à jour.', 'success');");
                 chargerDonnees();
@@ -88,15 +97,11 @@ public class OrgaBilletController implements Serializable {
                 PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Veuillez sélectionner un événement.', 'error');");
                 return;
             }
-            Evenement ev = evenementService.trouverParId(selectedEvenementId);
-            if (ev != null) {
-                ev.addCategorieBillet(nouvelleCategorie);
-                categorieBilletDao.save(nouvelleCategorie);
-                
-                PrimeFaces.current().executeScript("Swal.fire('Succès', 'Nouvelle catégorie ajoutée.', 'success');");
-                chargerDonnees();
-                preparerNouvelleCategorie();
-            }
+            evenementService.ajouterCategorie(selectedEvenementId, nouvelleCategorie);
+            
+            PrimeFaces.current().executeScript("Swal.fire('Succès', 'Nouvelle catégorie ajoutée.', 'success');");
+            chargerDonnees();
+            preparerNouvelleCategorie();
         } catch (Exception e) {
             e.printStackTrace();
             PrimeFaces.current().executeScript("Swal.fire('Erreur', 'Impossible d\\'ajouter la catégorie.', 'error');");

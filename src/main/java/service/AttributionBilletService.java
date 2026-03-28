@@ -43,4 +43,21 @@ public class AttributionBilletService {
             mettreAJour(a);
         }
     }
+
+    /**
+     * Enregistre une vente effectuée par un employé en mettant à jour son quota.
+     */
+    public void enregistrerVente(Long attributionId, int quantite) {
+        AttributionBillet a = trouverParId(attributionId);
+        if (a == null) {
+            throw new IllegalArgumentException("Attribution introuvable.");
+        }
+        
+        if (a.getReste() < quantite) {
+            throw new IllegalStateException("Quota insuffisant pour cet employé.");
+        }
+        
+        a.setQuantiteVendue(a.getQuantiteVendue() + quantite);
+        mettreAJour(a);
+    }
 }

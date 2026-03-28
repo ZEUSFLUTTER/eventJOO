@@ -57,8 +57,8 @@ public class AuthController implements Serializable {
                     return "dashboard_client?faces-redirect=true";
                     
                 case EMPLOYE: 
-                    System.out.println("Redirection EMPLOYE -> dashboard_client.xhtml");
-                    return "dashboard_client?faces-redirect=true";
+                    System.out.println("Redirection EMPLOYE -> dashboard_employe.xhtml");
+                    return "dashboard_employe?faces-redirect=true";
                     
                 default: 
                     System.out.println("Rôle non reconnu, redirection vers index");

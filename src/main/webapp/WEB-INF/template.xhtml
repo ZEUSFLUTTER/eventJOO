@@ -371,11 +371,11 @@
                                 outcome="index?faces-redirect=true"
                                 rendered="#{authController.utilisateurConnecte.role == 'CLIENT'}"/>
                             
-                            <!-- Menu EMPLOYE (même que CLIENT) -->
+                            <!-- Menu EMPLOYE -->
                             <p:menuitem 
                                 value="Mes Billets" 
                                 icon="pi pi-ticket"
-                                outcome="dashboard_client?faces-redirect=true"
+                                outcome="dashboard_employe?faces-redirect=true"
                                 rendered="#{authController.utilisateurConnecte.role == 'EMPLOYE'}"/>
                             
                             <p:menuitem 
